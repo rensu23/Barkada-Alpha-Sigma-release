@@ -5,11 +5,35 @@ import { PAYMENT_STATUS } from "./utils/constants.js";
 import { formatCurrency, formatDate, formatShortDateTime } from "./utils/formatters.js";
 import { showToast } from "./ui.js";
 
+const HISTORY_INITIAL_LIMIT = 10;
+
 function paymentClass(status) {
   if (status === PAYMENT_STATUS.PAID) return "status-paid";
   if (status === PAYMENT_STATUS.PENDING) return "status-pending";
   if (status === PAYMENT_STATUS.REJECTED) return "status-rejected";
   return "status-unpaid";
+}
+
+function paymentLabel(status) {
+  if (status === PAYMENT_STATUS.PAID) return "Paid / Confirmed";
+  if (status === PAYMENT_STATUS.PENDING) return "Pending Confirmation";
+  if (status === PAYMENT_STATUS.REJECTED) return "Rejected / Needs Update";
+  return "Not Paid";
+}
+
+function normalizeRole(role) {
+  const value = String(role || "").toLowerCase();
+  if (value === "treasurer" || value === "treasure") return "Treasurer";
+  if (value === "member") return "Member";
+  return "Unknown";
+}
+
+function historyMeaning(item) {
+  const user = item.user?.name || "Unknown user";
+  if (item.status === PAYMENT_STATUS.PAID) return `${user} paid and the payment was confirmed.`;
+  if (item.status === PAYMENT_STATUS.PENDING) return `${user} marked this as paid and is waiting for review.`;
+  if (item.status === PAYMENT_STATUS.REJECTED) return `${user} needs to update this rejected payment.`;
+  return `${user} has not paid this contribution yet.`;
 }
 
 function renderEmpty(target, title, message) {
@@ -18,15 +42,22 @@ function renderEmpty(target, title, message) {
 }
 
 function historyListItemTemplate(item) {
+  const user = item.user?.name || "Unknown user";
+  const role = normalizeRole(item.user?.role);
+  const statusLabel = paymentLabel(item.status);
   return `
     <article class="history-list-item">
-      <div class="history-list-main">
-        <strong>${item.contribution.title}</strong>
-        <p class="helper-text">${item.group.group_name} - ${formatCurrency(item.contribution.amount)}</p>
+      <div class="history-list-main history-person">
+        <strong>${user}</strong>
+        <span class="role-chip">${role}</span>
+        <p class="helper-text">${historyMeaning(item)}</p>
       </div>
-      <div class="history-list-meta">
-        <span class="status-chip ${paymentClass(item.status)}">${item.status}</span>
-        <span class="muted">${formatShortDateTime(item.latest_update)}</span>
+      <div class="history-list-fields">
+        <div><span>Contribution</span><strong>${item.contribution.title}</strong></div>
+        <div><span>Group</span><strong>${item.group.group_name}</strong></div>
+        <div><span>Amount</span><strong>${formatCurrency(item.contribution.amount)}</strong></div>
+        <div><span>Status</span><strong><span class="status-chip ${paymentClass(item.status)}">${statusLabel}</span></strong></div>
+        <div><span>Latest Update</span><strong>${formatShortDateTime(item.latest_update)}</strong></div>
       </div>
     </article>
   `;
@@ -169,30 +200,55 @@ export async function initContributionsPage() {
 
   if (page === "history") {
     const sortControl = document.querySelector("[data-history-sort]");
+    const controls = document.querySelector("[data-history-controls]");
+    let visibleCount = HISTORY_INITIAL_LIMIT;
+
     const loadHistory = async () => {
       const history = await getContributionHistory({ sort: sortControl?.value || "newest" });
       const table = document.querySelector("[data-history-table]");
       const mobileList = document.querySelector("[data-history-list]");
       if (!history.length) {
-        if (table) table.innerHTML = `<tr><td colspan="5">No payment history yet.</td></tr>`;
+        if (table) table.innerHTML = `<tr><td colspan="7">No payment history yet.</td></tr>`;
         renderEmpty(mobileList, "No payment history yet", "Payment records will appear here after dues are created.");
+        if (controls) controls.innerHTML = "";
         return;
       }
 
-      const rows = history.map((item) => `
+      const visibleHistory = history.slice(0, visibleCount);
+      const rows = visibleHistory.map((item) => {
+        const user = item.user?.name || "Unknown user";
+        const role = normalizeRole(item.user?.role);
+        const statusLabel = paymentLabel(item.status);
+        return `
         <tr>
+          <td><strong>${user}</strong><span class="history-row-note">${historyMeaning(item)}</span></td>
+          <td><span class="role-chip">${role}</span></td>
           <td>${item.contribution.title}</td>
           <td>${item.group.group_name}</td>
           <td>${formatCurrency(item.contribution.amount)}</td>
-          <td><span class="status-chip ${paymentClass(item.status)}">${item.status}</span></td>
+          <td><span class="status-chip ${paymentClass(item.status)}">${statusLabel}</span></td>
           <td>${formatShortDateTime(item.latest_update)}</td>
         </tr>
-      `).join("");
+      `;
+      }).join("");
       if (table) table.innerHTML = rows;
-      if (mobileList) mobileList.innerHTML = history.map(historyListItemTemplate).join("");
+      if (mobileList) mobileList.innerHTML = visibleHistory.map(historyListItemTemplate).join("");
+      if (controls) {
+        const remaining = history.length - visibleCount;
+        controls.innerHTML = history.length > HISTORY_INITIAL_LIMIT
+          ? `<button class="button-ghost history-more-button" type="button" data-history-more>${remaining > 0 ? `Show ${remaining} more` : "Show latest only"}</button>`
+          : "";
+        controls.querySelector("[data-history-more]")?.addEventListener("click", () => {
+          visibleCount = remaining > 0 ? history.length : HISTORY_INITIAL_LIMIT;
+          loadHistory();
+        });
+      }
     };
 
-    sortControl?.addEventListener("change", loadHistory);
+    sortControl?.addEventListener("change", () => {
+      visibleCount = HISTORY_INITIAL_LIMIT;
+      loadHistory();
+    });
     await loadHistory();
   }
 }

@@ -3,6 +3,7 @@ import { setActiveGroup } from "./services/auth.service.js";
 import { getSession } from "./utils/storage.js";
 
 const LANE_ORDER = ["Overview", "Groups", "Contributions", "Payments", "Members", "Reports"];
+const APP_LOGO_SRC = "../assets/icons/Logo.png";
 const ICONS = {
   Home: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-9.5Z"/></svg>`,
   Grid: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v6H4V5Zm9 0h7v6h-7V5ZM4 13h7v6H4v-6Zm9 0h7v6h-7v-6Z"/></svg>`,
@@ -16,6 +17,10 @@ const ICONS = {
   Moon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A7.5 7.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg>`,
   User: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm-7 9a7 7 0 0 1 14 0"/></svg>`,
 };
+
+function logoTemplate(src = APP_LOGO_SRC) {
+  return `<span class="brand-mark"><img src="${src}" alt="Barkada logo"></span>`;
+}
 
 function isActivePage(item, currentPage) {
   if (item.page === currentPage) return true;
@@ -50,7 +55,7 @@ function publicHeaderTemplate() {
 
   return `
     <div class="brand">
-      <span class="brand-mark">B</span>
+      ${logoTemplate(isPageFolder ? "../assets/icons/Logo.png" : "./assets/icons/Logo.png")}
       <span>Barkada</span>
     </div>
     <nav class="public-nav">
@@ -72,7 +77,7 @@ function appSidebarTemplate(role, currentPage, session, groups, activeGroupId) {
   const links = NAV_ITEMS[role] || NAV_ITEMS.member;
   return `
     <a class="brand sidebar-brand" href="../pages/dashboard.html" title="Barkada dashboard" aria-label="Barkada dashboard">
-      <span class="brand-mark">B</span>
+      ${logoTemplate()}
     </a>
     <nav class="surface-list sidebar-nav" aria-label="Main navigation">
       ${groupedLinks(links)
@@ -134,9 +139,8 @@ function bottomNavTemplate(currentPage) {
       `;
     })
     .join("")}
-    <button class="bottom-nav-button" type="button" data-mobile-menu-open aria-label="Open menu">
+    <button class="bottom-nav-button bottom-nav-menu" type="button" data-mobile-menu-open aria-label="Open menu">
       <span class="nav-icon" aria-hidden="true">${ICONS.Menu}</span>
-      <span>Menu</span>
     </button>`;
 }
 

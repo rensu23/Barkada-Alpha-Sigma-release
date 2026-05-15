@@ -171,21 +171,17 @@ function donutChartTemplate(segments, metricsState) {
           </div>
         </div>
       </div>
-      <div class="status-legend" data-chart-legend>
+      <div class="status-legend compact-status-legend" data-chart-legend>
         ${segments.map((item) => {
           const percent = total ? Math.round((item.count / total) * 100) : 0;
           return `
             <button class="legend-button ${item.key === activeSegment.key ? "is-active" : ""}" type="button" data-chart-segment="${item.key}">
               <span class="legend-swatch" style="--swatch:${item.color}"></span>
-              <span class="legend-label"><strong>${item.label}</strong><span>${item.count} records - ${formatCurrency(item.amount)}</span></span>
-              <strong>${percent}%</strong>
+              <span class="legend-label"><strong>${item.label}</strong><span>${item.count} ${item.count === 1 ? "record" : "records"} - ${formatCurrency(item.amount)}</span></span>
+              <span class="legend-percent">${percent}%</span>
             </button>
           `;
         }).join("")}
-        <div class="donut-detail" data-chart-detail>
-          <strong>${activeSegment.label}</strong>
-          <p class="helper-text">${activeSegment.count} records worth ${formatCurrency(activeSegment.amount)}.</p>
-        </div>
       </div>
     </div>
   `;
@@ -193,8 +189,7 @@ function donutChartTemplate(segments, metricsState) {
 
 function bindDonutChart(segments) {
   const chart = document.querySelector("[data-chart-legend]");
-  const detail = document.querySelector("[data-chart-detail]");
-  if (!chart || !detail) return;
+  if (!chart) return;
 
   const activate = (key) => {
     const segment = segments.find((item) => item.key === key);
@@ -202,7 +197,6 @@ function bindDonutChart(segments) {
     document.querySelectorAll("[data-chart-segment]").forEach((item) => {
       item.classList.toggle("is-active", item.dataset.chartSegment === key);
     });
-    detail.innerHTML = `<strong>${segment.label}</strong><p class="helper-text">${segment.count} records worth ${formatCurrency(segment.amount)}.</p>`;
   };
 
   document.querySelectorAll("[data-chart-segment]").forEach((item) => {
@@ -235,10 +229,10 @@ export async function initDashboardPage() {
   const segments = buildStatusSegments(metricsState);
 
   metrics.innerHTML = `
-    <article class="stat-card"><span class="muted">${role === "treasurer" ? "Managed groups" : "Joined groups"}</span><strong>${metricsState.groups.length}</strong><span class="helper-text">From your group_members rows.</span></article>
-    <article class="stat-card"><span class="muted">${role === "member" ? "Current due amount" : "Target amount"}</span><strong>${formatCurrency(role === "member" ? metricsState.myPendingAmount : metricsState.totalTarget)}</strong><span class="helper-text">${role === "member" ? "Unpaid, overdue, rejected, and pending dues in this group." : "Target for the active group context."}</span></article>
-    <article class="stat-card"><span class="muted">${role === "member" ? "Confirmed total" : "Collected total"}</span><strong>${formatCurrency(role === "member" ? metricsState.myConfirmedTotal : metricsState.totalCollected)}</strong><span class="helper-text">Recalculated from payment_records.</span></article>
-    <article class="stat-card"><span class="muted">${role === "member" ? "Waiting for review" : "Pending confirmations"}</span><strong>${role === "member" ? metricsState.myPendingCount : pending.length}</strong><span class="helper-text">${role === "member" ? "Marked paid and waiting for treasurer confirmation." : "Claims ready for action."}</span></article>
+    <article class="stat-card dashboard-stat"><span class="muted">${role === "treasurer" ? "Managed groups" : "Joined groups"}</span><strong>${metricsState.groups.length}</strong><span class="helper-text">Active memberships</span></article>
+    <article class="stat-card dashboard-stat"><span class="muted">${role === "member" ? "Current due amount" : "Target amount"}</span><strong>${formatCurrency(role === "member" ? metricsState.myPendingAmount : metricsState.totalTarget)}</strong><span class="helper-text">${role === "member" ? "Open dues in context" : "Active group target"}</span></article>
+    <article class="stat-card dashboard-stat"><span class="muted">${role === "member" ? "Confirmed total" : "Collected total"}</span><strong>${formatCurrency(role === "member" ? metricsState.myConfirmedTotal : metricsState.totalCollected)}</strong><span class="helper-text">Confirmed records</span></article>
+    <article class="stat-card dashboard-stat"><span class="muted">${role === "member" ? "Waiting for review" : "Pending confirmations"}</span><strong>${role === "member" ? metricsState.myPendingCount : pending.length}</strong><span class="helper-text">${role === "member" ? "Marked paid" : "Ready for action"}</span></article>
   `;
 
   if (actions) {
@@ -248,27 +242,27 @@ export async function initDashboardPage() {
   }
 
   charts.innerHTML = `
-    <article class="chart-card chart-stack">
-      <div class="page-header">
+    <article class="chart-card chart-stack compact-progress-card">
+      <div class="page-header compact-card-header">
         <div>
           <p class="eyebrow">Collected vs target</p>
           <h3>${metricsState.completion}% complete</h3>
-          <p class="helper-text">Confirmed payments count toward the collected total.</p>
         </div>
         <span class="status-chip status-paid">${formatCurrency(metricsState.totalCollected)}</span>
       </div>
       <div class="progress-track" aria-label="${metricsState.completion}% collected"><div class="progress-fill" style="--value:${metricsState.completion}%"></div></div>
-      <div class="chart-legend">
-        <div class="legend-item"><span>Target</span><strong>${formatCurrency(metricsState.totalTarget)}</strong></div>
-        <div class="legend-item"><span>Pending review value</span><strong>${formatCurrency(metricsState.totalPendingAmount)}</strong></div>
+      <div class="compact-metric-grid">
+        <div class="mini-stat"><span>Collected</span><strong>${formatCurrency(metricsState.totalCollected)}</strong></div>
+        <div class="mini-stat"><span>Target</span><strong>${formatCurrency(metricsState.totalTarget)}</strong></div>
+        <div class="mini-stat"><span>Pending review</span><strong>${formatCurrency(metricsState.totalPendingAmount)}</strong></div>
       </div>
+      <p class="helper-text">Confirmed payments count toward the collected total.</p>
     </article>
-    <article class="chart-card chart-stack">
-      <div class="page-header">
+    <article class="chart-card chart-stack payment-mix-card">
+      <div class="page-header compact-card-header">
         <div>
           <p class="eyebrow">Payment status mix</p>
           <h3>${metricsState.payments.length} payment records</h3>
-          <p class="helper-text">Hover, focus, or tap a slice to inspect status totals.</p>
         </div>
       </div>
       ${donutChartTemplate(segments, metricsState)}

@@ -22,6 +22,7 @@ $sql =
             c.title, c.amount, c.type, c.frequency, c.due_date, c.notes,
             g.group_id, g.group_name, g.treasurer_id,
             creator.name AS creator_name,
+            payer_member.role AS user_role,
             viewer.role AS viewer_role
      FROM payment_records pr
      INNER JOIN users payer ON payer.user_id = pr.user_id
@@ -29,6 +30,7 @@ $sql =
      INNER JOIN contributions c ON c.contribution_id = pr.contribution_id
      INNER JOIN `groups` g ON g.group_id = c.group_id
      LEFT JOIN users creator ON creator.user_id = g.treasurer_id
+     LEFT JOIN group_members payer_member ON payer_member.group_id = g.group_id AND payer_member.user_id = pr.user_id
      INNER JOIN group_members viewer ON viewer.group_id = g.group_id AND viewer.user_id = ?
      WHERE (pr.user_id = ? OR g.treasurer_id = ? OR LOWER(viewer.role) = 'treasurer')";
 
@@ -111,7 +113,8 @@ $history = array_map(function ($row) use ($memberStatus) {
         "latest_update" => $row["latest_update"],
         "user" => [
             "name" => $row["user_name"],
-            "email" => $row["user_email"]
+            "email" => $row["user_email"],
+            "role" => $row["user_role"] ?: "Unknown"
         ],
         "contribution" => [
             "title" => $row["title"],
