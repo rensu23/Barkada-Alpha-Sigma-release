@@ -104,7 +104,7 @@ function appTopbarTemplate(currentPage, session, groups, activeGroupId, role) {
       <h2>${APP_PAGES[currentPage] || "Barkada"}</h2>
     </div>
     <div class="topbar-actions">
-      ${groups.length ? `<label class="context-picker">Group<select data-group-switch>${options}</select></label>` : ""}
+      ${groups.length ? `<div class="context-picker"><select data-group-switch aria-label="Switch active group">${options}</select></div>` : ""}
       <a class="icon-button" href="../pages/settings.html" aria-label="Open settings">
         ${ICONS.Gear}
       </a>
@@ -155,7 +155,7 @@ function mobileMenuTemplate(role, currentPage, session, groups, activeGroupId) {
           </div>
           <button class="button-ghost" type="button" data-mobile-menu-close aria-label="Close menu">Close</button>
         </div>
-        <nav class="surface-list" aria-label="Secondary mobile navigation">
+        <nav class="surface-list mobile-menu-scroll" aria-label="Secondary mobile navigation">
           ${groupedLinks(links)
             .map(
               (group) => `

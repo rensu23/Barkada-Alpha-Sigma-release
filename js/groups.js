@@ -35,6 +35,27 @@ function memberStatusLabel(member) {
   return { text: "No dues", className: "status-unpaid" };
 }
 
+function groupCardTemplate(group) {
+  const isTreasurer = group.member_role === "Treasurer";
+  return `
+    <article class="card group-card">
+      <div class="group-card-copy">
+        <p class="eyebrow group-card-role">${group.member_role}</p>
+        <h3 class="group-card-title">${group.group_name}</h3>
+        <p class="helper-text group-card-description">${group.description || "No description added."}</p>
+      </div>
+      <div class="detail-list group-card-details">
+        <div class="summary-row"><span>Deadline</span><strong>${formatDate(group.deadline)}</strong></div>
+        <div class="summary-row"><span>Target</span><strong>${formatCurrency(group.target_amount)}</strong></div>
+        ${isTreasurer ? `<div class="summary-row"><span>Group code</span><strong>${group.join_code}</strong></div>` : `<div class="summary-row group-card-placeholder" aria-hidden="true"><span>Group code</span><strong>&nbsp;</strong></div>`}
+      </div>
+      <div class="inline-actions group-card-actions">
+        <a class="button" href="../pages/group-details.html?group_id=${group.group_id}">${isTreasurer ? "Manage group" : "Open details"}</a>
+      </div>
+    </article>
+  `;
+}
+
 function renderMembersList(list, members) {
   list.innerHTML = members.map((member) => {
     const status = memberStatusLabel(member);
@@ -76,25 +97,7 @@ export async function initGroupsPage() {
       return;
     }
 
-    list.innerHTML = groups.map((group) => `
-      <article class="card group-card">
-        <div class="page-header">
-          <div class="page-header-copy">
-            <p class="eyebrow">${group.member_role}</p>
-            <h3>${group.group_name}</h3>
-            <p class="helper-text">${group.description || ""}</p>
-          </div>
-        </div>
-        <div class="detail-list">
-          <div class="summary-row"><span>Deadline</span><strong>${formatDate(group.deadline)}</strong></div>
-          <div class="summary-row"><span>Target</span><strong>${formatCurrency(group.target_amount)}</strong></div>
-          ${group.member_role === "Treasurer" ? `<div class="summary-row"><span>Group code</span><strong>${group.join_code}</strong></div>` : ""}
-        </div>
-        <div class="inline-actions">
-          <a class="button" href="../pages/group-details.html?group_id=${group.group_id}">${group.member_role === "Treasurer" ? "Manage group" : "Open details"}</a>
-        </div>
-      </article>
-    `).join("");
+    list.innerHTML = groups.map(groupCardTemplate).join("");
   }
 
   if (page === "group-details") {

@@ -325,6 +325,10 @@
 .timeline-item {
   position: relative;
   padding-left: 1.25rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
 }
 
 .timeline-item::before {
@@ -573,7 +577,8 @@ th:last-child {
 }
 
 .mobile-menu-panel {
-  min-height: 100%;
+  min-height: 100dvh;
+  height: 100dvh;
   width: min(28rem, 100%);
   margin-left: auto;
   padding: calc(1rem + env(safe-area-inset-top)) 1rem calc(1.25rem + env(safe-area-inset-bottom));
@@ -581,7 +586,19 @@ th:last-child {
     linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 7%, transparent), transparent 12rem),
     var(--color-bg);
   border-left: 1px solid var(--color-border);
-  overflow: auto;
+  overflow: hidden;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.mobile-menu-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.1rem;
+  overscroll-behavior: contain;
+}
+
+body.has-mobile-menu {
+  overflow: hidden;
 }
 
 .payment-row {
@@ -607,8 +624,23 @@ th:last-child {
 }
 
 .active-group-card.is-wide {
-  grid-template-columns: minmax(15rem, 1.1fr) minmax(18rem, 1.45fr) minmax(10rem, auto);
-  align-items: center;
+  grid-template-columns: minmax(15rem, 0.95fr) minmax(18rem, 1.35fr);
+  align-items: stretch;
+}
+
+.active-group-card .inline-actions {
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.active-groups-grid.is-multiple .active-group-card.is-wide {
+  grid-template-columns: 1fr;
+}
+
+.active-groups-grid.is-multiple .active-group-card .inline-actions {
+  grid-column: 1 / -1;
+  justify-content: stretch;
 }
 
 .progress-summary {
@@ -739,7 +771,7 @@ th:last-child {
 
 .data-row,
 .member-list-row,
-.history-card {
+.history-list-item {
   min-width: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -784,23 +816,38 @@ th:last-child {
   display: none;
 }
 
-.history-bento {
+.history-list-item {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0.85rem 0;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: transparent;
 }
 
-.history-card {
-  align-self: start;
+.history-list-item:first-child {
+  padding-top: 0;
 }
 
-.history-card-main {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
-  gap: 0.75rem;
-  padding: 0.85rem;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface));
+.history-list-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.history-list-main,
+.history-list-meta {
+  min-width: 0;
+}
+
+.history-list-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  text-align: right;
 }
 
 .empty-card {
@@ -940,11 +987,27 @@ th:last-child {
   }
 }
 
+@media (min-width: 1180px) {
+  .active-groups-grid.is-single .active-group-card.is-wide {
+    grid-template-columns: minmax(15rem, 1.05fr) minmax(18rem, 1.45fr) minmax(10rem, auto);
+    align-items: center;
+  }
+
+  .active-groups-grid.is-single .active-group-card .inline-actions {
+    grid-column: auto;
+    justify-content: flex-end;
+  }
+}
+
 @media (max-width: 900px) {
   .active-group-card.is-wide,
   .donut-layout,
   .member-list-row {
     grid-template-columns: 1fr;
+  }
+
+  .active-group-card .inline-actions {
+    justify-content: stretch;
   }
 
   .payment-row {
@@ -963,16 +1026,18 @@ th:last-child {
     flex: 1 1 12rem;
   }
 
-  .topbar-actions .context-picker,
   .topbar-actions .profile-name {
     display: none;
+  }
+
+  .topbar-actions .context-picker {
+    min-width: clamp(8.5rem, 38vw, 12rem);
   }
 
   .member-list-row,
   .payment-row,
   .mobile-list-item,
-  .data-row,
-  .history-card {
+  .data-row {
     padding: 0.9rem;
   }
 }
@@ -1012,17 +1077,23 @@ th:last-child {
 }
 
 .context-picker {
-  display: grid;
-  gap: 0.25rem;
+  display: flex;
+  align-items: center;
   min-width: min(14rem, 100%);
   color: var(--color-text-muted);
   font-size: 0.82rem;
   font-weight: 700;
 }
 
-.context-picker select {
+.context-picker select,
+.sort-select {
   min-height: 2.45rem;
   padding: 0.55rem 0.75rem;
+}
+
+.sort-select {
+  width: auto;
+  min-width: 10rem;
 }
 
 .disclosure {
@@ -1045,7 +1116,34 @@ th:last-child {
 }
 
 .group-card {
+  display: grid;
+  grid-template-rows: auto auto minmax(2.75rem, auto);
+  gap: var(--space-4);
   border-left: 4px solid var(--color-primary);
+}
+
+.group-card-copy {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.group-card-title,
+.group-card-description {
+  min-width: 0;
+}
+
+.group-card-details {
+  align-self: start;
+}
+
+.group-card-placeholder {
+  visibility: hidden;
+}
+
+.group-card-actions {
+  align-self: end;
+  margin-top: auto;
 }
 
 .group-card:has(.status-pending) {
@@ -1087,14 +1185,32 @@ th:last-child {
   .contribution-row,
   .legend-item,
   .payment-row,
-  .active-group-card.is-wide {
+  .active-group-card.is-wide,
+  .timeline-item,
+  .history-list-item {
     display: grid;
   }
 
-  .topbar-actions .context-picker,
+  .timeline-item,
+  .history-list-item {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .timeline-item .muted,
+  .history-list-meta {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
   .topbar-actions .profile-name,
   .app-kicker {
     display: none;
+  }
+
+  .topbar-actions .context-picker {
+    display: flex;
+    min-width: clamp(7.75rem, 38vw, 9rem);
   }
 
   .payment-row-actions {
@@ -1117,7 +1233,34 @@ th:last-child {
 
   .history-mobile-list {
     display: grid;
-    gap: var(--space-3);
+    gap: 0;
+  }
+
+  .group-card-placeholder {
+    display: none;
+  }
+
+  .sort-select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mobile-menu-panel {
+    width: 100%;
+    border-left: 0;
+  }
+
+  .card,
+  .glass-card,
+  .chart-card,
+  .timeline-card,
+  .table-card,
+  .auth-card {
+    padding: 0.95rem;
+  }
+
+  .page-header {
+    gap: 0.65rem;
   }
 }
 

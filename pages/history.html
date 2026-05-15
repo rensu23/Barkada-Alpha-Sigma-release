@@ -25,12 +25,10 @@
             <p class="helper-text">Review payment records for your dues and treasurer-managed groups.</p>
           </div>
           <div class="header-actions">
-            <label class="field-group" for="history-sort">Sort
-              <select id="history-sort" data-history-sort>
-                <option value="newest">Newest first</option>
-                <option value="oldest">Oldest first</option>
-              </select>
-            </label>
+            <select class="sort-select" id="history-sort" data-history-sort aria-label="Sort payment history">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
           </div>
         </section>
         <section class="table-card page-section">
@@ -42,7 +40,7 @@
               <tbody data-history-table></tbody>
             </table>
           </div>
-          <div class="history-mobile-list history-bento" data-history-list></div>
+          <div class="history-mobile-list" data-history-list></div>
         </section>
       </main>
     </div>

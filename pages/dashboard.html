@@ -59,12 +59,10 @@
                 <p class="eyebrow">Recent activity</p>
                 <h2>Latest updates</h2>
               </div>
-              <label class="field-group" for="activity-sort">Sort
-                <select id="activity-sort" data-activity-sort>
-                  <option value="newest">Newest first</option>
-                  <option value="oldest">Oldest first</option>
-                </select>
-              </label>
+              <select class="sort-select" id="activity-sort" data-activity-sort aria-label="Sort latest activity">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+              </select>
             </div>
             <div class="timeline" data-dashboard-activity></div>
           </article>

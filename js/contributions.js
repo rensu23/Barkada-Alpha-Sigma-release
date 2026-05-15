@@ -17,31 +17,16 @@ function renderEmpty(target, title, message) {
   target.innerHTML = `<article class="empty-card"><h3>${title}</h3><p class="helper-text">${message}</p></article>`;
 }
 
-function namesList(people = []) {
-  if (!people.length) return "None";
-  return people.map((person) => person.name).join(", ");
-}
-
-function historyCardTemplate(item) {
+function historyListItemTemplate(item) {
   return `
-    <article class="history-card">
-      <div class="page-header">
-        <div class="page-header-copy">
-          <p class="eyebrow">${item.group.group_name}</p>
-          <h3>${item.contribution.title}</h3>
-          <p class="helper-text">Created/marked ${formatShortDateTime(item.marked_at)} - Latest update ${formatShortDateTime(item.latest_update)}</p>
-        </div>
+    <article class="history-list-item">
+      <div class="history-list-main">
+        <strong>${item.contribution.title}</strong>
+        <p class="helper-text">${item.group.group_name} - ${formatCurrency(item.contribution.amount)}</p>
+      </div>
+      <div class="history-list-meta">
         <span class="status-chip ${paymentClass(item.status)}">${item.status}</span>
-      </div>
-      <div class="history-card-main">
-        <div class="mini-stat"><span>Amount</span><strong>${formatCurrency(item.contribution.amount)}</strong></div>
-        <div class="mini-stat"><span>Group creator</span><strong>${item.group.creator_name}</strong></div>
-        <div class="mini-stat"><span>Member record</span><strong>${item.user.name}</strong></div>
-      </div>
-      <div class="detail-list">
-        <div class="summary-row"><span>Members who paid</span><strong>${namesList(item.members.paid)}</strong></div>
-        <div class="summary-row"><span>Members not paid</span><strong>${namesList(item.members.not_paid)}</strong></div>
-        <div class="summary-row"><span>Pending review</span><strong>${namesList(item.members.pending)}</strong></div>
+        <span class="muted">${formatShortDateTime(item.latest_update)}</span>
       </div>
     </article>
   `;
@@ -204,7 +189,7 @@ export async function initContributionsPage() {
         </tr>
       `).join("");
       if (table) table.innerHTML = rows;
-      if (mobileList) mobileList.innerHTML = history.map(historyCardTemplate).join("");
+      if (mobileList) mobileList.innerHTML = history.map(historyListItemTemplate).join("");
     };
 
     sortControl?.addEventListener("change", loadHistory);
