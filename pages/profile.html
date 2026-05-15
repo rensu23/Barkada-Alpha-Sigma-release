@@ -18,29 +18,11 @@
       <header class="app-topbar" data-topbar></header>
       <nav class="mobile-bottom-nav" data-bottom-nav></nav>
       <main class="page-content">
-        <section class="grid-2 page-section">
-          <article class="card">
-            <p class="eyebrow">Profile</p>
-            <div class="page-header space-top">
-              <div class="page-header-copy">
-                <h1 data-profile-name>Loading profile...</h1>
-                <p class="helper-text" data-profile-email>Loading email...</p>
-              </div>
-              <div class="brand-mark profile-logo" data-avatar>
-                <img src="../assets/icons/Logo.png" alt="Barkada logo">
-              </div>
-            </div>
-            <div class="detail-list space-top">
-              <div class="summary-row"><span>Active role</span><strong data-profile-role>Loading role...</strong></div>
-              <div class="summary-row"><span>Active group</span><strong data-profile-group>Loading group...</strong></div>
-            </div>
+        <section class="page-section">
+          <article class="empty-card">
+            <h1>Opening account settings...</h1>
+            <p class="helper-text">Profile details now live in Settings.</p>
           </article>
-          <form class="card stack" data-profile-form action="../php/users/update-profile.php" method="post">
-            <h2>Edit profile</h2>
-            <div class="field-group"><label>Name<input name="name" type="text"></label></div>
-            <div class="field-group"><label>Email<input name="email" type="email"></label></div>
-            <button class="button" type="submit">Save profile</button>
-          </form>
         </section>
       </main>
     </div>

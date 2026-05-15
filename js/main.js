@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await initContributionsPage();
     await initPaymentsPage();
     await initProfilePage();
-    initSettingsPage();
+    await initSettingsPage();
   } catch (error) {
     showAppLoadError(error);
   }

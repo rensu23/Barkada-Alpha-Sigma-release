@@ -26,14 +26,11 @@
 }
 
 .brand-mark {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.65rem;
+  height: 2.65rem;
   display: grid;
   place-items: center;
-  border-radius: 1rem;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  color: white;
-  box-shadow: var(--shadow-sm);
+  color: inherit;
 }
 
 .public-nav {

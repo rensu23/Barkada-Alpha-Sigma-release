@@ -83,10 +83,8 @@ function groupPaymentSummary(metricsState, groupId) {
 function activeGroupTemplate(group, metricsState, role) {
   const urgency = getUrgency(group.deadline);
   const summary = groupPaymentSummary(metricsState, group.group_id);
-  const nextHref = role === "treasurer" ? "./confirmations.html" : "./contributions.html";
-  const nextLabel = role === "treasurer" ? "Review confirmations" : "View my dues";
-  const secondaryHref = role === "treasurer" ? `./group-details.html?group_id=${group.group_id}` : "./groups.html";
-  const secondaryLabel = role === "treasurer" ? "Manage group" : "Group details";
+  const actionHref = role === "treasurer" ? `./group-details.html?group_id=${group.group_id}` : "./groups.html";
+  const actionLabel = role === "treasurer" ? "Manage group" : "Group details";
   return `
     <article class="card active-group-card is-wide">
       <div class="page-header-copy">
@@ -109,9 +107,8 @@ function activeGroupTemplate(group, metricsState, role) {
           <div class="summary-row"><span>Payment status</span><strong>${summary.paid} paid, ${summary.pending} pending, ${summary.unpaid + summary.rejected} open</strong></div>
         </div>
       </div>
-      <div class="inline-actions">
-        <a class="button" href="${nextHref}">${nextLabel}</a>
-        <a class="button-ghost" href="${secondaryHref}">${secondaryLabel}</a>
+      <div class="inline-actions active-group-actions">
+        <a class="button-ghost" href="${actionHref}">${actionLabel}</a>
       </div>
     </article>
   `;

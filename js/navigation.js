@@ -113,10 +113,6 @@ function appTopbarTemplate(currentPage, session, groups, activeGroupId, role) {
       <a class="icon-button" href="../pages/settings.html" aria-label="Open settings">
         ${ICONS.Gear}
       </a>
-      <a class="button-secondary" href="../pages/profile.html" aria-label="Open profile for ${displayName}">
-        <span class="nav-icon">${ICONS.User}</span>
-        <span class="profile-name">${displayName.split(" ")[0]}</span>
-      </a>
     </div>
   `;
 }

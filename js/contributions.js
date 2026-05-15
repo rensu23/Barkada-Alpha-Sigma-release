@@ -36,6 +36,25 @@ function historyMeaning(item) {
   return `${user} has not paid this contribution yet.`;
 }
 
+function historyInsightsTemplate(history) {
+  const amounts = history
+    .map((item) => Number(item.contribution?.amount || 0))
+    .filter((amount) => Number.isFinite(amount));
+  if (!amounts.length) return "";
+
+  const highest = history.reduce((best, item) => Number(item.contribution?.amount || 0) > Number(best.contribution?.amount || 0) ? item : best, history[0]);
+  const lowest = history.reduce((best, item) => Number(item.contribution?.amount || 0) < Number(best.contribution?.amount || 0) ? item : best, history[0]);
+  const average = amounts.reduce((sum, amount) => sum + amount, 0) / amounts.length;
+
+  return `
+    <div class="insight-grid">
+      <div class="mini-stat"><span>Highest amount</span><strong>${formatCurrency(highest.contribution.amount)}</strong><small>${highest.user?.name || "Unknown user"} - ${highest.contribution.title}</small></div>
+      <div class="mini-stat"><span>Lowest amount</span><strong>${formatCurrency(lowest.contribution.amount)}</strong><small>${lowest.user?.name || "Unknown user"} - ${lowest.contribution.title}</small></div>
+      <div class="mini-stat"><span>Average amount</span><strong>${formatCurrency(average)}</strong><small>Across ${history.length} payment ${history.length === 1 ? "record" : "records"}</small></div>
+    </div>
+  `;
+}
+
 function renderEmpty(target, title, message) {
   if (!target) return;
   target.innerHTML = `<article class="empty-card"><h3>${title}</h3><p class="helper-text">${message}</p></article>`;
@@ -201,6 +220,7 @@ export async function initContributionsPage() {
   if (page === "history") {
     const sortControl = document.querySelector("[data-history-sort]");
     const controls = document.querySelector("[data-history-controls]");
+    const insights = document.querySelector("[data-history-insights]");
     let visibleCount = HISTORY_INITIAL_LIMIT;
 
     const loadHistory = async () => {
@@ -211,10 +231,12 @@ export async function initContributionsPage() {
         if (table) table.innerHTML = `<tr><td colspan="7">No payment history yet.</td></tr>`;
         renderEmpty(mobileList, "No payment history yet", "Payment records will appear here after dues are created.");
         if (controls) controls.innerHTML = "";
+        if (insights) insights.innerHTML = "";
         return;
       }
 
       const visibleHistory = history.slice(0, visibleCount);
+      if (insights) insights.innerHTML = historyInsightsTemplate(history);
       const rows = visibleHistory.map((item) => {
         const user = item.user?.name || "Unknown user";
         const role = normalizeRole(item.user?.role);

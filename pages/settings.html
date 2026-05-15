@@ -18,35 +18,27 @@
       <header class="app-topbar" data-topbar></header>
       <nav class="mobile-bottom-nav" data-bottom-nav></nav>
       <main class="page-content">
-        <section class="grid-2 page-section">
-          <article class="card stack">
-            <p class="eyebrow">Preferences</p>
-            <h1>Settings</h1>
-            <div class="field-group">
-              <label for="role-switch">Current account role</label>
-              <select id="role-switch" data-role-switch>
-                <option value="treasurer">Treasurer / Admin</option>
-                <option value="member">Member</option>
-                <option value="hybrid">Hybrid</option>
-              </select>
-            </div>
-            <p class="helper-text">Your role comes from your membership in the active group.</p>
-            <button class="button-secondary" type="button" data-theme-toggle><span data-theme-label>Dark mode</span></button>
-            <a class="button-secondary" href="./profile.html">Open profile</a>
-            <div class="accordion">
-              <button type="button">Notification preferences</button>
-              <div class="accordion-content">
-                <p class="helper-text">UI shell only. Store preferences only after the schema supports them.</p>
+        <section class="account-settings page-section">
+          <article class="card stack account-card">
+            <div class="page-header compact-card-header">
+              <div class="page-header-copy">
+                <p class="eyebrow">Account</p>
+                <h1>Settings</h1>
+                <p class="helper-text">Profile, preferences, and account tools live here.</p>
               </div>
+              <button class="button-danger account-logout" type="button" data-logout>Log out</button>
             </div>
-          </article>
-          <article class="card stack">
-            <h2>Account tools</h2>
-            <div class="detail-list">
+            <form class="settings-profile-form" data-settings-profile-form action="../php/users/update-profile.php" method="post">
+              <div class="field-group"><label>Name<input name="name" type="text"></label></div>
+              <div class="field-group"><label>Email<input name="email" type="email"></label></div>
+              <button class="button" type="submit">Save profile</button>
+            </form>
+            <div class="account-tools-list">
+              <div class="summary-row"><span>Active role</span><strong data-settings-role>Loading role...</strong></div>
+              <div class="summary-row"><span>Active group</span><strong data-settings-group>Loading group...</strong></div>
               <div class="summary-row"><span>Password reset</span><strong>Available from the login page</strong></div>
-              <div class="summary-row"><span>Profile</span><strong>Name and email can be updated anytime</strong></div>
+              <div class="summary-row"><span>Theme</span><button class="button-secondary account-inline-action" type="button" data-theme-toggle><span data-theme-label>Dark mode</span></button></div>
             </div>
-            <button class="button-danger" type="button" data-logout>Log out</button>
           </article>
         </section>
       </main>

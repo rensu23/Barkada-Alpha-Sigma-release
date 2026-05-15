@@ -43,7 +43,13 @@ if ($groupId > 0) {
     $types .= "i";
 }
 
-$sql .= " ORDER BY latest_update $sortSql, pr.payment_id $sortSql";
+if ($sort === "amount-desc") {
+    $sql .= " ORDER BY c.amount DESC, latest_update DESC, pr.payment_id DESC";
+} elseif ($sort === "amount-asc") {
+    $sql .= " ORDER BY c.amount ASC, latest_update DESC, pr.payment_id DESC";
+} else {
+    $sql .= " ORDER BY latest_update $sortSql, pr.payment_id $sortSql";
+}
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param($types, ...$params);
