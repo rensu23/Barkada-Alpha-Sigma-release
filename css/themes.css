@@ -1,0 +1,23 @@
+/* Theme overrides live here so beginners can quickly find them. */
+html[data-theme="dark"] {
+  --color-bg: #07141c;
+  --color-surface: #102430;
+  --color-surface-alt: #193543;
+  --color-card: rgba(18, 39, 51, 0.96);
+  --color-border: rgba(229, 233, 235, 0.22);
+  --color-text: #f4fbfb;
+  --color-text-muted: #c7dce2;
+  --color-primary: #8ad0e7;
+  --color-primary-strong: #b9e1ee;
+  --color-on-primary: #06131a;
+  --color-secondary: #77aaa6;
+  --color-success: #9db683;
+  --color-warning: #e8b280;
+  --color-danger: #f08e84;
+  --color-info: #e2ca86;
+  --color-overlay: rgba(4, 10, 14, 0.7);
+  --color-shadow: rgba(0, 0, 0, 0.28);
+  --shadow-sm: 0 10px 26px rgba(0, 0, 0, 0.18);
+  --shadow-md: 0 20px 52px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 35px 80px rgba(0, 0, 0, 0.34);
+}

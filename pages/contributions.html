@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contributions | Barkada</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body class="app-shell" data-app-page="contributions">
+  <div class="app-layout">
+    <aside class="app-sidebar" data-sidebar></aside>
+    <div class="app-main">
+      <header class="app-topbar" data-topbar></header>
+      <nav class="mobile-bottom-nav" data-bottom-nav></nav>
+      <main class="page-content">
+        <section class="page-header page-section">
+          <div class="page-header-copy">
+            <p class="eyebrow">Contributions</p>
+            <h1>One-time and recurring dues</h1>
+            <p class="helper-text">Track one-time and recurring dues for the groups you belong to.</p>
+          </div>
+        </section>
+        <section class="card toolbar-card page-section">
+          <div class="filter-bar">
+            <div class="field-group">
+              <label for="contrib-search">Search contributions</label>
+              <input id="contrib-search" type="search" data-contributions-search placeholder="Search by title or group">
+            </div>
+            <div class="field-group">
+              <label for="contrib-type">Type</label>
+              <select id="contrib-type" data-contributions-type>
+                <option>All</option>
+                <option>One-time</option>
+                <option>Recurring</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="contrib-group">Group</label>
+              <select id="contrib-group" data-contributions-group></select>
+            </div>
+            <div class="field-group">
+              <label for="contrib-status">Status</label>
+              <select id="contrib-status" data-contributions-status>
+                <option>All</option>
+                <option>Not Paid</option>
+                <option>Pending</option>
+                <option>Paid</option>
+                <option>Rejected</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="contrib-sort">Sort</label>
+              <select id="contrib-sort" data-contributions-sort>
+                <option value="due-soon">Due soon</option>
+                <option value="due-latest">Latest due date</option>
+                <option value="amount-high">Highest amount</option>
+                <option value="amount-low">Lowest amount</option>
+                <option value="latest">Newest created</option>
+                <option value="oldest">Oldest created</option>
+                <option value="status">Status</option>
+                <option value="title">Title</option>
+              </select>
+            </div>
+          </div>
+        </section>
+        <section class="page-section">
+          <details class="disclosure" data-contribution-create-panel>
+            <summary>Create contribution</summary>
+            <form class="stack" data-contribution-form action="../php/contributions/create.php" method="post">
+            <h2>Create contribution</h2>
+            <div class="form-grid">
+              <div class="field-group"><label>Group<select name="group_id"></select></label></div>
+              <div class="field-group"><label>Title<input name="title" type="text" placeholder="Example: Final Venue Payment"></label></div>
+              <div class="field-group"><label>Amount<input name="amount" type="number" placeholder="0"></label></div>
+              <div class="field-group"><label>Type<select name="type"><option>One-time</option><option>Recurring</option></select></label></div>
+              <div class="field-group"><label>Frequency<select name="frequency"><option>One-time</option><option>Weekly</option><option>Monthly</option><option>Custom</option></select></label></div>
+              <div class="field-group"><label>Due date<input name="due_date" type="date"></label><p class="helper-text">Optional due date for this contribution.</p></div>
+            </div>
+            <div class="field-group"><label>Notes<textarea name="notes" rows="4" placeholder="Reference or reminder for members"></textarea></label></div>
+            <button class="button" type="submit">Add contribution</button>
+            </form>
+          </details>
+        </section>
+        <section class="contribution-board page-section" data-contributions-list></section>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="../js/main.js">
+    import { checkAuth } from "./js/services/auth.service.js";
+
+(async () => {
+    const res = await checkAuth();
+
+    if (!res.logged_in) {
+        window.location.href = "login.html";
+    }
+})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+/*
+  Legacy placeholder file kept so existing references do not break.
+  This redesigned codebase does not use an XP system.
+*/

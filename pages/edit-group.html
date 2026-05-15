@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Group | Barkada</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body class="app-shell" data-app-page="edit-group">
+  <div class="app-layout">
+    <aside class="app-sidebar" data-sidebar></aside>
+    <div class="app-main">
+      <header class="app-topbar" data-topbar></header>
+      <nav class="mobile-bottom-nav" data-bottom-nav></nav>
+      <main class="page-content">
+        <section class="page-header page-section">
+          <div class="page-header-copy">
+            <p class="eyebrow">Edit group</p>
+            <h1>Update group details</h1>
+            <p class="helper-text">Only the treasurer of this group can save these changes.</p>
+          </div>
+        </section>
+        <section class="grid-2 page-section">
+          <form class="card stack" data-group-form action="../php/groups/update.php" method="post">
+            <div class="form-grid">
+              <div class="field-group"><label>group_name<input name="group_name" type="text"></label></div>
+              <div class="field-group"><label>Join code<input name="join_code" type="text"></label></div>
+              <div class="field-group"><label>target_amount<input name="target_amount" type="number"></label></div>
+              <div class="field-group"><label>deadline<input name="deadline" type="date"></label></div>
+            </div>
+            <div class="field-group"><label>description<textarea name="description" rows="5"></textarea></label></div>
+            <button class="button" type="submit">Save changes</button>
+          </form>
+          <aside class="stack">
+            <article class="card">
+              <h2>Admin reminders</h2>
+              <div class="detail-list space-top">
+                <div class="summary-row"><span>Delete flow</span><strong>Use a confirmation modal before removing any group later.</strong></div>
+                <div class="summary-row"><span>Join code changes</span><strong>Share the new code only with allowed members.</strong></div>
+              </div>
+            </article>
+          </aside>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="../js/main.js">
+    import { checkAuth } from "./js/services/auth.service.js";
+
+(async () => {
+    const res = await checkAuth();
+
+    if (!res.logged_in) {
+        window.location.href = "login.html";
+    }
+})();
+  </script>
+</body>
+</html>

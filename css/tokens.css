@@ -1,0 +1,61 @@
+:root {
+  /* Core palette from the project brief */
+  --butter: #f4d892;
+  --moss: #c0b05b;
+  --palm: #657652;
+  --guava: #f2b6a3;
+  --sunset: #e89c73;
+  --sangria: #e36559;
+  --seabreeze: #e5e9eb;
+  --lagoon: #94bebb;
+  --odyssey: #23617e;
+
+  /* Semantic light theme tokens */
+  --color-bg: #f6f8f8;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef3f4;
+  --color-card: rgba(255, 255, 255, 0.92);
+  --color-border: rgba(35, 97, 126, 0.14);
+  --color-text: #173042;
+  --color-text-muted: #4f6670;
+  --color-primary: var(--odyssey);
+  --color-primary-strong: #18485f;
+  --color-on-primary: #ffffff;
+  --color-secondary: var(--lagoon);
+  --color-success: var(--palm);
+  --color-warning: var(--sunset);
+  --color-danger: var(--sangria);
+  --color-info: var(--butter);
+  --color-overlay: rgba(16, 33, 44, 0.54);
+  --color-shadow: rgba(24, 58, 73, 0.16);
+
+  --shadow-sm: 0 8px 24px rgba(24, 58, 73, 0.08);
+  --shadow-md: 0 18px 48px rgba(24, 58, 73, 0.14);
+  --shadow-lg: 0 30px 70px rgba(16, 33, 44, 0.18);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-pill: 999px;
+
+  --container-width: min(1180px, calc(100vw - clamp(1rem, 4vw, 2rem)));
+  --sidebar-width: 5.75rem;
+  --header-height: 4.25rem;
+  --bottom-nav-height: 4.75rem;
+
+  --font-sans: "Aptos", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-display: "Trebuchet MS", "Aptos Display", "Segoe UI", sans-serif;
+  --font-mono: "Cascadia Code", "Consolas", monospace;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  --transition-base: 180ms ease;
+}

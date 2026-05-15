@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In | Barkada</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body data-page="login">
+  <div class="public-shell auth-layout">
+    <header data-public-header></header>
+    <main class="container auth-grid">
+      <aside class="auth-aside hero-panel glass-card">
+        <div class="stack">
+          <p class="eyebrow">Welcome back</p>
+          <h1>Pick up where your group left off.</h1>
+          <p class="muted">The login form is ready for PHP sessions and MySQL-backed accounts.</p>
+          <div class="callout"><span>Security</span><p class="helper-text">Server code must use prepared statements, password_verify, session_regenerate_id, and generic credential errors.</p></div>
+        </div>
+      </aside>
+      <section class="auth-card">
+        <div class="stack">
+          <p class="eyebrow">Account access</p>
+          <h1>Log in</h1>
+          <p class="helper-text">Use your email and password to open your contribution dashboard.</p>
+        </div>
+        <form class="stack space-top" data-login-form action="../php/auth/login.php" method="post" novalidate>
+          <div class="field-group">
+            <label for="login-email">Email</label>
+            <input id="login-email" type="email" name="email" placeholder="you@example.com">
+            <p class="error-text" data-error-for="email"></p>
+          </div>
+          <div class="field-group">
+            <label for="login-password">Password</label>
+            <div class="input-with-action">
+              <input id="login-password" type="password" name="password" placeholder="Enter your password">
+              <button class="input-action" type="button" data-password-toggle="login-password">Show</button>
+            </div>
+            <p class="error-text" data-error-for="password"></p>
+          </div>
+          <div class="field-grid">
+            <label><input type="checkbox" name="remember_me"> Remember me on this device</label>
+            <p class="helper-text">Your login is handled by a PHP session on this device.</p>
+          </div>
+          <button class="button button-block" type="submit">Log in</button>
+          <p class="helper-text">Forgot your password? <a class="page-link" href="./forgot-password.html">Reset it here</a>.</p>
+          <p class="helper-text">New here? <a class="page-link" href="./signup.html">Create an account</a>.</p>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="../js/main.js">
+    import { login } from "./js/services/auth.service.js";
+
+  document.querySelector("form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.querySelector("#email").value;
+    const password = document.querySelector("#password").value;
+    const remember = document.querySelector("#rememberMe").checked;
+
+    const res = await login(email, password, remember);
+
+    if (res.success) {
+        window.location.href = "dashboard.html";
+    } else {
+        alert(res.message);
+    }
+});
+
+
+  </script>
+</body>
+</html>

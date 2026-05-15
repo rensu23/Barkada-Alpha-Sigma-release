@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recurring Cycles | Barkada</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body class="app-shell" data-app-page="recurring-cycle">
+  <div class="app-layout">
+    <aside class="app-sidebar" data-sidebar></aside>
+    <div class="app-main">
+      <header class="app-topbar" data-topbar></header>
+      <nav class="mobile-bottom-nav" data-bottom-nav></nav>
+      <main class="page-content">
+        <section class="page-header page-section">
+          <div class="page-header-copy">
+            <p class="eyebrow">Recurring cycles</p>
+            <h1>Weekly and monthly due cycles</h1>
+            <p class="helper-text">Recurring dues are based on the type and frequency saved for each contribution.</p>
+          </div>
+        </section>
+        <section class="grid-3 page-section" data-cycle-list></section>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="../js/main.js">
+    import { checkAuth } from "./js/services/auth.service.js";
+
+(async () => {
+    const res = await checkAuth();
+
+    if (!res.logged_in) {
+        window.location.href = "login.html";
+    }
+})();
+  </script>
+</body>
+</html>

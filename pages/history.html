@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History | Barkada</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body class="app-shell" data-app-page="history">
+  <div class="app-layout">
+    <aside class="app-sidebar" data-sidebar></aside>
+    <div class="app-main">
+      <header class="app-topbar" data-topbar></header>
+      <nav class="mobile-bottom-nav" data-bottom-nav></nav>
+      <main class="page-content">
+        <section class="page-header page-section">
+          <div class="page-header-copy">
+            <p class="eyebrow">History</p>
+            <h1>Payment history</h1>
+            <p class="helper-text">Review payment records for your dues and treasurer-managed groups.</p>
+          </div>
+          <div class="header-actions">
+            <label class="field-group" for="history-sort">Sort
+              <select id="history-sort" data-history-sort>
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+              </select>
+            </label>
+          </div>
+        </section>
+        <section class="table-card page-section">
+          <div class="table-wrap is-collapsible">
+            <table>
+              <thead>
+                <tr><th>Contribution</th><th>Group</th><th>Amount</th><th>Status</th><th>Latest update</th></tr>
+              </thead>
+              <tbody data-history-table></tbody>
+            </table>
+          </div>
+          <div class="history-mobile-list history-bento" data-history-list></div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="../js/main.js">
+    import { checkAuth } from "./js/services/auth.service.js";
+
+(async () => {
+    const res = await checkAuth();
+
+    if (!res.logged_in) {
+        window.location.href = "login.html";
+    }
+})();
+  </script>
+</body>
+</html>

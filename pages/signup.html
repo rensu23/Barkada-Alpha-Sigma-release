@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Barkada</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body data-page="signup">
+  <div class="public-shell auth-layout">
+    <header data-public-header></header>
+    <main class="container auth-grid">
+      <aside class="auth-aside hero-panel glass-card">
+        <div class="stack">
+          <p class="eyebrow">Start clean</p>
+          <h1>Create your account and join groups when you are ready.</h1>
+          <p class="muted">This starter keeps the sign-up flow lightweight and beginner-friendly while leaving room for future PHP validation and sessions.</p>
+        </div>
+      </aside>
+      <section class="auth-card">
+        <div class="stack">
+          <p class="eyebrow">New account</p>
+          <h1>Sign up</h1>
+          <p class="helper-text">Use your real name so treasurers can recognize you in member lists and confirmations.</p>
+        </div>
+        <form class="stack space-top" data-signup-form action="../php/auth/register.php" method="post" novalidate>
+          <div class="field-group">
+            <label for="signup-name">Full name</label>
+            <input id="signup-name" name="name" type="text" placeholder="Example: Maria Santos">
+            <p class="error-text" data-error-for="name"></p>
+          </div>
+          <div class="field-group">
+            <label for="signup-email">Email</label>
+            <input id="signup-email" name="email" type="email" placeholder="you@example.com">
+            <p class="error-text" data-error-for="email"></p>
+          </div>
+          <div class="field-group">
+            <label for="signup-password">Password</label>
+            <div class="input-with-action">
+              <input id="signup-password" name="password" type="password" placeholder="At least 8 characters">
+              <button class="input-action" type="button" data-password-toggle="signup-password">Show</button>
+            </div>
+            <p class="helper-text">Use at least 8 characters. Passwords are saved as hashes.</p>
+            <p class="error-text" data-error-for="password"></p>
+          </div>
+          <div class="field-group">
+            <label for="signup-confirm-password">Confirm password</label>
+            <div class="input-with-action">
+              <input id="signup-confirm-password" name="confirm_password" type="password" placeholder="Type the same password again">
+              <button class="input-action" type="button" data-password-toggle="signup-confirm-password">Show</button>
+            </div>
+            <p class="error-text" data-error-for="confirm_password"></p>
+          </div>
+          <button class="button button-block" type="submit">Create account</button>
+          <p class="helper-text">Already have an account? <a class="page-link" href="./login.html">Log in here</a>.</p>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="../js/main.js"></script>
+</body>
+</html>

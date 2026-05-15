@@ -1,0 +1,17 @@
+/*
+  Legacy compatibility file.
+  The redesigned project now uses:
+  - base.css
+  - layout.css
+  - components.css
+  - utilities.css
+  - pages.css
+
+  Keep this file only if an older HTML file still points to it.
+*/
+
+@import url("./base.css");
+@import url("./layout.css");
+@import url("./components.css");
+@import url("./utilities.css");
+@import url("./pages.css");

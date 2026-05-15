@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Barkada</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body class="app-shell" data-app-page="dashboard">
+  <div class="offline-banner" data-offline-banner><span>You appear to be offline. Backend requests may fail until connection returns.</span><button class="button-ghost" type="button">Offline mode</button></div>
+  <div class="app-layout">
+    <aside class="app-sidebar" data-sidebar></aside>
+    <div class="app-main">
+      <header class="app-topbar" data-topbar></header>
+      <nav class="mobile-bottom-nav" data-bottom-nav></nav>
+      <main class="page-content">
+        <section class="page-header page-section">
+          <div class="page-header-copy">
+            <p class="eyebrow">Overview</p>
+            <h1>Collection status at a glance</h1>
+            <p class="helper-text">Your dashboard is based on your joined groups, contributions, and payment records.</p>
+          </div>
+          <div class="header-actions" data-dashboard-actions>
+            <a class="button" href="./create-group.html">Create group</a>
+            <a class="button-secondary" href="./confirmations.html">Review pending claims</a>
+          </div>
+        </section>
+        <section class="stats-grid page-section" data-dashboard-stats>
+          <div class="stat-card skeleton" style="height:120px"></div>
+          <div class="stat-card skeleton" style="height:120px"></div>
+          <div class="stat-card skeleton" style="height:120px"></div>
+          <div class="stat-card skeleton" style="height:120px"></div>
+        </section>
+        <section class="grid-2 page-section" data-dashboard-charts>
+          <div class="chart-card skeleton" style="height:260px"></div>
+          <div class="chart-card skeleton" style="height:260px"></div>
+        </section>
+        <section class="page-section">
+          <article class="table-card">
+            <div class="page-header">
+              <div class="page-header-copy">
+                <p class="eyebrow">Groups overview</p>
+                <h2>Active groups</h2>
+                <p class="helper-text">Your next action follows the role you have in the selected group.</p>
+              </div>
+            </div>
+            <div class="active-groups-grid space-top" data-dashboard-overview></div>
+          </article>
+        </section>
+        <section class="page-section">
+          <article class="timeline-card">
+            <div class="page-header">
+              <div class="page-header-copy">
+                <p class="eyebrow">Recent activity</p>
+                <h2>Latest updates</h2>
+              </div>
+              <label class="field-group" for="activity-sort">Sort
+                <select id="activity-sort" data-activity-sort>
+                  <option value="newest">Newest first</option>
+                  <option value="oldest">Oldest first</option>
+                </select>
+              </label>
+            </div>
+            <div class="timeline" data-dashboard-activity></div>
+          </article>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="../js/main.js">
+    import { checkAuth } from "./js/services/auth.service.js";
+
+(async () => {
+    const res = await checkAuth();
+
+    if (!res.logged_in) {
+        window.location.href = "login.html";
+    }
+})();
+  </script>
+</body>
+</html>

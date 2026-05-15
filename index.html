@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barkada | Group Contribution Tracker</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/utilities.css">
+  <link rel="stylesheet" href="./css/pages.css">
+</head>
+<body>
+  <div class="public-shell">
+    <header data-public-header></header>
+
+    <main class="container">
+      <!-- Landing hero -->
+      <section class="hero-grid page-section">
+        <div class="landing-hero-copy">
+          <p class="eyebrow">Contribution tracking for real groups</p>
+          <h1>See who still owes, who already marked paid, and what still needs confirmation.</h1>
+          <p class="muted">Barkada keeps group contribution records easy to follow for classmates, barkadas, student orgs, and small teams. No online payment processing, just clean tracking and accountability.</p>
+          <div class="metric-ribbon">
+            <div><strong>Clear status flow</strong><p class="helper-text">Not Paid, Pending, Paid, and Rejected stay visible to everyone involved.</p></div>
+            <div><strong>Recurring dues support</strong><p class="helper-text">Weekly and monthly cycles help groups plan repeated contributions.</p></div>
+            <div><strong>Treasurer tools</strong><p class="helper-text">Confirm claims, share join codes, and keep summaries organized.</p></div>
+          </div>
+        </div>
+        <div class="hero-panel glass-card">
+          <div class="stack">
+            <div class="spotlight-card">
+              <p class="eyebrow">Today's overview</p>
+              <h3>Collection progress without the clutter</h3>
+              <p class="helper-text">A calm dashboard for targets, pending confirmations, and group progress.</p>
+            </div>
+            <div class="grid-2">
+              <article class="stat-card">
+                <span class="muted">Collected</span>
+              <strong>Confirmed</strong>
+              <span class="helper-text">Totals update after treasurer confirmation.</span>
+              </article>
+              <article class="stat-card">
+                <span class="muted">Pending review</span>
+              <strong>For checking</strong>
+              <span class="helper-text">Members can mark payments for review.</span>
+              </article>
+            </div>
+            <article class="card">
+              <div class="page-header">
+                <div class="page-header-copy">
+                  <p class="eyebrow">Join quickly</p>
+              <h3>Share a custom group code</h3>
+                </div>
+              </div>
+              <p class="helper-text">Members can join from inside their account using the code given by their treasurer.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section">
+        <div class="page-header">
+          <div class="page-header-copy">
+            <p class="eyebrow">What the product covers</p>
+            <h2>Built for real contribution tracking, not payment processing.</h2>
+            <p class="helper-text">The frontend focuses on visibility, trust, and simple group coordination. It avoids pricing pages, wallets, checkouts, and upgrade prompts.</p>
+          </div>
+        </div>
+        <div class="grid-3">
+          <article class="card"><h3>Treasurer dashboard</h3><p class="helper-text">Track total target, collected, pending confirmations, and activity in one place.</p></article>
+          <article class="card"><h3>Member journey</h3><p class="helper-text">Review current dues, mark payment as done, and check history without confusing terms.</p></article>
+          <article class="card"><h3>Clear records</h3><p class="helper-text">Groups, members, dues, and history stay organized for easier reporting.</p></article>
+        </div>
+      </section>
+
+      <section class="two-column page-section">
+        <article class="chart-card">
+          <p class="eyebrow">Group transparency</p>
+          <h3>Everyone can understand the same status language.</h3>
+          <div class="mini-bars space-top">
+            <div><strong>Paid</strong><span style="--bar-value:72%"></span></div>
+            <div><strong>Pending</strong><span style="--bar-value:22%"></span></div>
+            <div><strong>Not Paid</strong><span style="--bar-value:46%"></span></div>
+          </div>
+        </article>
+        <article class="chart-card">
+          <p class="eyebrow">Simple workflow</p>
+          <h3>A clear process from group setup to payment review.</h3>
+          <div class="timeline space-top">
+            <div class="timeline-item"><div><strong>Create or join a group</strong><p class="helper-text">Treasurers create groups and members join by code.</p></div></div>
+            <div class="timeline-item"><div><strong>Add contributions</strong><p class="helper-text">Treasurers add dues with amount, due date, and notes.</p></div></div>
+            <div class="timeline-item"><div><strong>Review history</strong><p class="helper-text">Payment records show who paid and who still needs to pay.</p></div></div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

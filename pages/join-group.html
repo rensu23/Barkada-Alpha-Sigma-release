@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join Group | Barkada</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body class="app-shell" data-app-page="join-group">
+  <div class="app-layout">
+    <aside class="app-sidebar" data-sidebar></aside>
+    <div class="app-main">
+      <header class="app-topbar" data-topbar></header>
+      <nav class="mobile-bottom-nav" data-bottom-nav></nav>
+      <main class="page-content">
+        <section class="page-header page-section">
+          <div class="page-header-copy">
+            <p class="eyebrow">Join group</p>
+            <h1>Join with a group code.</h1>
+            <p class="helper-text">Enter the custom code shared by your treasurer.</p>
+          </div>
+          <a class="button-secondary" href="./groups.html">Back to groups</a>
+        </section>
+        <section class="grid-2 page-section">
+          <section class="card">
+            <div class="stack">
+              <p class="eyebrow">Quick join</p>
+              <h1>Join with a group code.</h1>
+              <p class="helper-text">Enter the custom code shared by your treasurer.</p>
+            </div>
+            <form class="stack space-top" data-join-form action="../php/groups/join.php" method="post">
+              <div class="field-group">
+                <label for="join-code">Join code</label>
+                <input id="join-code" type="text" name="join_code" placeholder="Enter group code" aria-describedby="join-feedback">
+              </div>
+              <button class="button button-block" type="submit">Join group</button>
+            </form>
+            <article class="callout hidden" data-join-success aria-live="polite" id="join-feedback"><span>Success</span><strong>You joined a group.</strong></article>
+            <article class="callout hidden" data-join-invalid aria-live="assertive"><span>Check</span><strong>That code is invalid or expired.</strong></article>
+          </section>
+          <section class="card">
+            <div class="page-header">
+              <div class="page-header-copy">
+                <p class="eyebrow">Code help</p>
+                <h2>Where to find the code</h2>
+                <p class="helper-text">Ask your treasurer for the current group code. After joining, the group appears in your Groups page automatically.</p>
+              </div>
+            </div>
+            <div class="detail-list space-top">
+              <div class="summary-row">
+                <span>Step 1</span>
+                <strong>Get the code from your treasurer</strong>
+              </div>
+              <div class="summary-row">
+                <span>Step 2</span>
+                <strong>Enter it exactly as shared</strong>
+              </div>
+              <div class="summary-row">
+                <span>Step 3</span>
+                <strong>Open the group from your dashboard</strong>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="../js/main.js">
+    import { checkAuth } from "./js/services/auth.service.js";
+
+(async () => {
+    const res = await checkAuth();
+
+    if (!res.logged_in) {
+        window.location.href = "login.html";
+    }
+})();
+  </script>
+</body>
+</html>

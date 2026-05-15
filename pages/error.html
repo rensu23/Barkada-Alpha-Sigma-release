@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error State | Barkada</title>
+  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+  <div class="public-shell auth-layout">
+    <main class="container">
+      <section class="auth-card text-center">
+        <p class="eyebrow">Something went wrong</p>
+        <h1>The page could not load right now.</h1>
+        <p class="helper-text">Use this fallback when a backend request fails or the user loses access to a resource.</p>
+        <div class="cta-row space-top">
+          <a class="button" href="./dashboard.html">Try again</a>
+          <a class="button-secondary" href="../index.html">Go home</a>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

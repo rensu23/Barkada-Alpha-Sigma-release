@@ -1,0 +1,183 @@
+/* Page-specific styling and a few custom compositions */
+.landing-hero-copy {
+  display: grid;
+  gap: 1rem;
+  max-width: 36rem;
+}
+
+.landing-hero-copy h1 {
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+}
+
+.cta-row,
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.metric-ribbon {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.2rem;
+}
+
+.metric-ribbon div {
+  padding: 0.95rem 1rem;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border: 1px solid var(--color-border);
+}
+
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+  padding: 1.3rem;
+  border-radius: 1.4rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 12%, var(--color-surface)), var(--color-surface));
+  border: 1px solid var(--color-border);
+}
+
+.spotlight-card::after {
+  content: "";
+  position: absolute;
+  width: 9rem;
+  height: 9rem;
+  right: -1.25rem;
+  top: -1rem;
+  border-radius: 2rem;
+  background: color-mix(in srgb, var(--color-secondary) 34%, transparent);
+  transform: rotate(16deg);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 32rem;
+  margin-inline: auto;
+}
+
+.auth-card h1 {
+  font-size: clamp(2rem, 4vw, 2.7rem);
+}
+
+.app-kicker {
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+}
+
+.mini-bars {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.mini-bars div {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.mini-bars span {
+  display: block;
+  height: 0.7rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface-alt));
+  overflow: hidden;
+}
+
+.mini-bars span::after {
+  content: "";
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  width: var(--bar-value, 50%);
+}
+
+.contribution-board,
+.active-groups-grid,
+.member-list {
+  display: grid;
+  gap: clamp(0.9rem, 2vw, 1.25rem);
+}
+
+.contribution-board {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+}
+
+.active-groups-grid.is-single {
+  grid-template-columns: 1fr;
+}
+
+.active-groups-grid.is-multiple {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+}
+
+.toolbar-card {
+  padding: clamp(0.85rem, 2vw, 1rem);
+}
+
+.compact-note {
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+}
+
+.history-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-info) 18%, var(--color-surface));
+}
+
+.offline-banner {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: color-mix(in srgb, var(--color-warning) 16%, var(--color-surface));
+  border-bottom: 1px solid color-mix(in srgb, var(--color-warning) 36%, var(--color-border));
+}
+
+.offline-banner.is-visible {
+  display: flex;
+}
+
+.empty-illustration {
+  width: 4rem;
+  height: 4rem;
+  display: grid;
+  place-items: center;
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--color-secondary) 24%, var(--color-surface));
+  color: var(--color-primary);
+}
+
+.details-grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+@media (min-width: 760px) {
+  .metric-ribbon {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .landing-hero-copy h1 {
+    font-size: clamp(2.05rem, 13vw, 3rem);
+  }
+
+  .hero-panel {
+    min-height: auto;
+    padding: 1rem;
+  }
+}
