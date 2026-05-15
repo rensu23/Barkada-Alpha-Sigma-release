@@ -6,7 +6,7 @@ import { initContributionsPage } from "./contributions.js";
 import { initPaymentsPage } from "./payments.js";
 import { initProfilePage } from "./profile.js";
 import { initSettingsPage } from "./settings.js";
-import { bindThemeButtons, applySavedTheme } from "./theme.js";
+import { applySavedPalette, bindPaletteControls } from "./theme.js";
 import { bindOfflineBanner } from "./ui.js";
 import { initAppNavigation, initLandingLinks, initPublicNavigation, initRoleSwitcher } from "./navigation.js";
 
@@ -25,7 +25,7 @@ function showAppLoadError(error) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    applySavedTheme();
+    applySavedPalette();
     const canContinue = initRouteGuards();
     if (!canContinue) return;
     initPublicNavigation();
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initAppNavigation();
     initLandingLinks();
     initRoleSwitcher();
-    bindThemeButtons();
+    bindPaletteControls();
     bindOfflineBanner();
     initAuthPages();
     await initDashboardPage();

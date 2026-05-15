@@ -9,12 +9,12 @@
 }
 
 html {
-  color-scheme: light;
+  color-scheme: dark;
   scroll-behavior: smooth;
 }
 
-html[data-theme="dark"] {
-  color-scheme: dark;
+html[data-palette="soft-mist"] {
+  color-scheme: light;
 }
 
 body {
@@ -23,8 +23,8 @@ body {
   overflow-x: hidden;
   font-family: var(--font-sans);
   background:
-    radial-gradient(circle at top right, rgba(148, 190, 187, 0.22), transparent 26%),
-    linear-gradient(180deg, rgba(244, 216, 146, 0.12), transparent 24%),
+    radial-gradient(circle at top right, var(--color-bg-glow), transparent 26%),
+    linear-gradient(180deg, var(--color-bg-wash), transparent 24%),
     var(--color-bg);
   color: var(--color-text);
   line-height: 1.5;
@@ -81,8 +81,8 @@ textarea:focus-visible,
 button:focus-visible,
 a:focus-visible {
   outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 35%, transparent);
-  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+  border-color: var(--color-accent);
 }
 
 h1,

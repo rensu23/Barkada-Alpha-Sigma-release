@@ -1,5 +1,6 @@
 import { getCurrentSession, logoutUser } from "./services/auth.service.js";
 import { getUserProfile, updateUserProfile } from "./services/user.service.js";
+import { bindPaletteControls, renderPaletteSelector } from "./theme.js";
 import { showToast } from "./ui.js";
 
 export async function initSettingsPage() {
@@ -29,6 +30,8 @@ export async function initSettingsPage() {
   const groupTarget = document.querySelector("[data-settings-group]");
   if (roleTarget) roleTarget.textContent = activeGroup?.member_role || session?.role || "Member";
   if (groupTarget) groupTarget.textContent = activeGroup?.group_name || "No active group";
+  renderPaletteSelector(document.querySelector("[data-palette-options]"));
+  bindPaletteControls();
 
   document.querySelector("[data-logout]")?.addEventListener("click", async () => {
     await logoutUser();

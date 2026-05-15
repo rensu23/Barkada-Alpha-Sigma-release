@@ -20,11 +20,11 @@ function buildStatusSegments(metricsState) {
   // PHP can replace this with a SQL aggregate grouped by payment_records.status and due date.
   const today = new Date();
   const summary = {
-    paid: { key: "paid", label: "Paid / confirmed", count: 0, amount: 0, color: "var(--color-success)" },
-    pending: { key: "pending", label: "Pending confirmation", count: 0, amount: 0, color: "var(--color-warning)" },
-    overdue: { key: "overdue", label: "Overdue", count: 0, amount: 0, color: "var(--color-danger)" },
-    unpaid: { key: "unpaid", label: "Not paid", count: 0, amount: 0, color: "color-mix(in srgb, var(--color-text-muted) 58%, var(--color-surface))" },
-    rejected: { key: "rejected", label: "Rejected / needs update", count: 0, amount: 0, color: "color-mix(in srgb, var(--color-danger) 74%, var(--color-warning))" },
+    paid: { key: "paid", label: "Paid / confirmed", count: 0, amount: 0, color: "var(--color-chart-paid)" },
+    pending: { key: "pending", label: "Pending confirmation", count: 0, amount: 0, color: "var(--color-chart-pending)" },
+    overdue: { key: "overdue", label: "Overdue", count: 0, amount: 0, color: "var(--color-chart-overdue)" },
+    unpaid: { key: "unpaid", label: "Not paid", count: 0, amount: 0, color: "var(--color-chart-unpaid)" },
+    rejected: { key: "rejected", label: "Rejected / needs update", count: 0, amount: 0, color: "var(--color-chart-rejected)" },
   };
 
   metricsState.payments.forEach((payment) => {

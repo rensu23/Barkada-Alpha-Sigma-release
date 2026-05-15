@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up | Barkada</title>
-  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <script>(()=>{const p=localStorage.getItem("barkada-palette")||(localStorage.getItem("barkada-theme")==="light"?"soft-mist":"midnight-teal");document.documentElement.dataset.palette=p;document.documentElement.dataset.theme=p==="soft-mist"?"light":"dark";})();</script>
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">

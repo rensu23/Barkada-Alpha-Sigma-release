@@ -14,7 +14,6 @@ const ICONS = {
   Gear: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8 4a7.8 7.8 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a8 8 0 0 0-1.7-1L15.5 3h-4l-.4 3.1a8 8 0 0 0-1.7 1l-2.4-1-2 3.4L7 11a7.8 7.8 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a8 8 0 0 0 1.7 1l.4 3.1h4l.4-3.1a8 8 0 0 0 1.7-1l2.4 1 2-3.4-2-1.5a7.8 7.8 0 0 0 .1-1Z"/></svg>`,
   Join: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm-7 9a7 7 0 0 1 14 0M17 9h4m-2-2v4"/></svg>`,
   Menu: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg>`,
-  Moon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A7.5 7.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg>`,
   User: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm-7 9a7 7 0 0 1 14 0"/></svg>`,
 };
 
@@ -64,12 +63,6 @@ function publicHeaderTemplate() {
       <a href="${signupHref}">Sign up</a>
       <a href="${joinHref}">Join group</a>
     </nav>
-    <div class="header-actions">
-      <button class="button-ghost" type="button" data-theme-toggle aria-label="Toggle color theme">
-        <span class="nav-icon">${ICONS.Moon}</span>
-        <span data-theme-label>Dark mode</span>
-      </button>
-    </div>
   `;
 }
 

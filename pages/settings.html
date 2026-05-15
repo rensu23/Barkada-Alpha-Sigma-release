@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings | Barkada</title>
-  <script>document.documentElement.dataset.theme=localStorage.getItem("barkada-theme")||"light";</script>
+  <script>(()=>{const p=localStorage.getItem("barkada-palette")||(localStorage.getItem("barkada-theme")==="light"?"soft-mist":"midnight-teal");document.documentElement.dataset.palette=p;document.documentElement.dataset.theme=p==="soft-mist"?"light":"dark";})();</script>
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -37,8 +37,17 @@
               <div class="summary-row"><span>Active role</span><strong data-settings-role>Loading role...</strong></div>
               <div class="summary-row"><span>Active group</span><strong data-settings-group>Loading group...</strong></div>
               <div class="summary-row"><span>Password reset</span><strong>Available from the login page</strong></div>
-              <div class="summary-row"><span>Theme</span><button class="button-secondary account-inline-action" type="button" data-theme-toggle><span data-theme-label>Dark mode</span></button></div>
             </div>
+            <section class="settings-palette-section" aria-labelledby="palette-heading">
+              <div class="settings-section-heading">
+                <div>
+                  <h2 id="palette-heading">Color palette</h2>
+                  <p class="helper-text">Choose the look of your dashboard.</p>
+                </div>
+                <strong data-current-palette>Midnight Teal</strong>
+              </div>
+              <div class="palette-grid" data-palette-options></div>
+            </section>
           </article>
         </section>
       </main>

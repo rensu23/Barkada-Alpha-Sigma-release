@@ -1,5 +1,6 @@
 export const STORAGE_KEYS = {
   theme: "barkada-theme",
+  palette: "barkada-palette",
 };
 
 export const PAYMENT_STATUS = {
