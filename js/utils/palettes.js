@@ -3,37 +3,37 @@ export const DEFAULT_PALETTE = "midnight-teal";
 export const PALETTES = [
   {
     id: "midnight-teal",
-    label: "Midnight Teal",
+    label: "Noe's Midnight",
     description: "Dark teal",
   },
   {
     id: "witch-cherry",
-    label: "Witch Cherry",
+    label: "Dimson's Kiss",
     description: "Gothic wine",
   },
   {
     id: "rose-dusk",
-    label: "Rose Dusk",
+    label: "Delfin's Blush",
     description: "Soft mauve",
   },
   {
     id: "garnet-bloom",
-    label: "Garnet Bloom",
+    label: "Javellena's Bloom",
     description: "Deep berry",
   },
   {
     id: "forest-sage",
-    label: "Forest Sage",
+    label: "Alido's Whisper",
     description: "Calm green",
   },
   {
     id: "golden-ember",
-    label: "Golden Ember",
+    label: "Janeo's Ember",
     description: "Warm gold",
   },
   {
     id: "soft-mist",
-    label: "Soft Mist",
+    label: "Marcelino's Oat",
     description: "Light mist",
   },
 ];
