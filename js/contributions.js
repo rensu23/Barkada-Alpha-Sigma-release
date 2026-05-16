@@ -27,6 +27,11 @@ function paymentLabel(status) {
   return "Not Paid";
 }
 
+function payerActionLabel(item) {
+  if (item.status === PAYMENT_STATUS.PENDING) return "Update payment";
+  return "Submit payment";
+}
+
 function normalizeRole(role) {
   const value = String(role || "").toLowerCase();
   if (value === "treasurer" || value === "treasure") return "Treasurer";
@@ -168,8 +173,8 @@ export async function initContributionsPage() {
             <div class="summary-row"><span>Your role</span><strong>${item.member_role}</strong></div>
           </div>
           ${item.notes ? `<p class="helper-text space-top">${item.notes}</p>` : ""}
-          ${item.member_role !== "Treasurer" && item.status !== "Paid"
-            ? `<button class="button space-top" type="button" data-mark-paid="${item.payment_id || ""}" data-contribution-id="${item.contribution_id}">Mark as paid</button>`
+          ${item.member_role !== "Treasurer" && item.status !== PAYMENT_STATUS.PAID
+            ? `<button class="button space-top" type="button" data-mark-paid="${item.payment_id || ""}" data-contribution-id="${item.contribution_id}">${payerActionLabel(item)}</button>`
             : ""}
         </article>
       `).join("");
@@ -178,7 +183,7 @@ export async function initContributionsPage() {
         button.addEventListener("click", async () => {
           try {
             await markPaymentAsDone(button.dataset.markPaid, button.dataset.contributionId);
-            showToast("Payment marked for treasurer review.");
+            showToast("Payment submitted for review.");
             contributions = await getContributions("", currentQueryFromControls());
             await renderContributions();
           } catch (error) {

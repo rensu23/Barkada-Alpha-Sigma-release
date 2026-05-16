@@ -1,10 +1,12 @@
 <?php
 /**
- * Member marks their own payment record as pending review.
+ * Current user submits their own payment record for review.
+ * Treasurers are payers too, so they can use this for their own row.
  */
 
 require_once __DIR__ . "/../helpers/auth-guard.php";
 require_once __DIR__ . "/../helpers/activity.php";
+require_once __DIR__ . "/../helpers/payment-records.php";
 
 requirePost();
 $userId = requireLogin();
@@ -33,15 +35,14 @@ if ($paymentId <= 0) {
         jsonResponse(["success" => false, "message" => "Contribution not found for your group."], 404);
     }
 
-    $status = "Not Paid";
-    $stmt = $conn->prepare(
-        "INSERT INTO payment_records (user_id, contribution_id, status, confirmed_by)
-         VALUES (?, ?, ?, NULL)"
-    );
-    $stmt->bind_param("iis", $userId, $contributionId, $status);
-    $stmt->execute();
-    $paymentId = $stmt->insert_id;
-    $stmt->close();
+    ensurePaymentRecordsForGroup($conn, (int) $contribution["group_id"], $contributionId);
+    $ownPayment = findOwnPaymentRecord($conn, $userId, $contributionId);
+
+    if (!$ownPayment) {
+        jsonResponse(["success" => false, "message" => "Payment record was not created for your account."], 500);
+    }
+
+    $paymentId = (int) $ownPayment["payment_id"];
 }
 
 $stmt = $conn->prepare(
@@ -66,6 +67,24 @@ if ((int) $payment["user_id"] !== $userId) {
 
 requireGroupMember($conn, $userId, (int) $payment["group_id"]);
 
+$role = getMemberRole($conn, $userId, (int) $payment["group_id"]);
+$isTreasurerPayer = strtolower($role ?? "") === "treasurer" || getGroupTreasurerId($conn, (int) $payment["group_id"]) === $userId;
+
+if ($isTreasurerPayer) {
+    $status = "Paid";
+    $stmt = $conn->prepare("UPDATE payment_records SET status = ?, confirmed_at = COALESCE(confirmed_at, NOW()), confirmed_by = COALESCE(confirmed_by, ?) WHERE payment_id = ?");
+    $stmt->bind_param("sii", $status, $userId, $paymentId);
+    $stmt->execute();
+    $stmt->close();
+
+    logActivity($conn, $userId, (int) $payment["group_id"], (int) $payment["contribution_id"], $paymentId, "payment_self_auto_paid");
+
+    jsonResponse([
+        "success" => true,
+        "message" => "Treasurer payment is automatically paid."
+    ]);
+}
+
 $status = "Pending";
 $stmt = $conn->prepare("UPDATE payment_records SET status = ?, marked_at = NOW(), confirmed_at = NULL, confirmed_by = NULL WHERE payment_id = ?");
 $stmt->bind_param("si", $status, $paymentId);
@@ -76,5 +95,5 @@ logActivity($conn, $userId, (int) $payment["group_id"], (int) $payment["contribu
 
 jsonResponse([
     "success" => true,
-    "message" => "Payment marked as pending."
+    "message" => "Payment submitted for review."
 ]);

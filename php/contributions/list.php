@@ -5,6 +5,7 @@
 
 require_once __DIR__ . "/../helpers/auth-guard.php";
 require_once __DIR__ . "/../helpers/contribution-options.php";
+require_once __DIR__ . "/../helpers/payment-records.php";
 
 $userId = requireLogin();
 $groupId = getIntValue($_GET["group_id"] ?? 0);
@@ -12,6 +13,21 @@ $search = cleanText($_GET["search"] ?? "");
 $frequency = cleanText($_GET["frequency"] ?? "");
 $status = cleanText($_GET["status"] ?? "");
 $sort = cleanText($_GET["sort"] ?? "title");
+
+if ($groupId > 0) {
+    requireGroupMember($conn, $userId, $groupId);
+    ensurePaymentRecordsForGroup($conn, $groupId);
+} else {
+    $stmt = $conn->prepare("SELECT DISTINCT group_id FROM group_members WHERE user_id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $groupRows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    foreach ($groupRows as $groupRow) {
+        ensurePaymentRecordsForGroup($conn, (int) $groupRow["group_id"]);
+    }
+}
 
 $sql =
     "SELECT c.contribution_id, c.group_id, c.title, c.amount, c.type, c.frequency, c.due_date, c.notes,

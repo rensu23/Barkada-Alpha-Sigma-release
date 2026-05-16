@@ -4,6 +4,7 @@
  */
 
 require_once __DIR__ . "/../helpers/auth-guard.php";
+require_once __DIR__ . "/../helpers/payment-records.php";
 
 requirePost();
 $userId = requireLogin();
@@ -39,16 +40,7 @@ try {
     $stmt->execute();
     $stmt->close();
 
-    // Existing contribution rows get a payment record for the new member.
-    $stmt = $conn->prepare(
-        "INSERT INTO payment_records (user_id, contribution_id, status, confirmed_by)
-         SELECT ?, contribution_id, 'Not Paid', NULL
-         FROM contributions
-         WHERE group_id = ?"
-    );
-    $stmt->bind_param("ii", $userId, $groupId);
-    $stmt->execute();
-    $stmt->close();
+    ensurePaymentRecordsForGroup($conn, $groupId);
 
     $conn->commit();
     startBarkadaSession();

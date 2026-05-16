@@ -48,8 +48,8 @@ if (!$isTreasurer) {
     jsonResponse(["success" => false, "message" => "Only the group treasurer can update payment statuses here."], 403);
 }
 
-if ($isOwnRecord && $status === "Rejected") {
-    jsonResponse(["success" => false, "message" => "Use paid or not paid for your own treasurer status."], 422);
+if ($isOwnRecord && $isTreasurer && $status !== "Paid") {
+    jsonResponse(["success" => false, "message" => "Treasurer payment records are automatically paid."], 422);
 }
 
 $confirmedAtSql = $status === "Paid" || $status === "Rejected" ? "NOW()" : "NULL";
@@ -69,7 +69,7 @@ $stmt->execute();
 $stmt->close();
 
 if ($isOwnRecord) {
-    $action = $status === "Paid" ? "payment_self_marked_paid" : "payment_self_marked_unpaid";
+    $action = "payment_self_auto_paid";
 } elseif ($status === "Paid") {
     $action = "payment_member_marked_paid";
 } elseif ($status === "Rejected") {

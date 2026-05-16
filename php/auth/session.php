@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . "/../helpers/auth-guard.php";
+require_once __DIR__ . "/../helpers/payment-records.php";
 
 $userId = requireLogin();
 $sessionUser = buildSessionPayload($conn, $userId);
@@ -21,6 +22,10 @@ $state = [
 ];
 
 if (count($groupIds) > 0) {
+    foreach ($groupIds as $groupId) {
+        ensurePaymentRecordsForGroup($conn, (int) $groupId);
+    }
+
     $placeholders = implode(",", array_fill(0, count($groupIds), "?"));
     $types = str_repeat("i", count($groupIds));
 

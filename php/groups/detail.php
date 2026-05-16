@@ -4,6 +4,7 @@
  */
 
 require_once __DIR__ . "/../helpers/auth-guard.php";
+require_once __DIR__ . "/../helpers/payment-records.php";
 
 $userId = requireLogin();
 $groupId = getIntValue($_GET["group_id"] ?? 0);
@@ -12,6 +13,7 @@ if ($groupId <= 0) {
     jsonResponse(["success" => false, "message" => "Valid group_id is required."], 422);
 }
 
+ensureTreasurerMembership($conn, $groupId);
 $role = requireGroupMember($conn, $userId, $groupId);
 
 $stmt = $conn->prepare(

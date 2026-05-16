@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . "/../helpers/auth-guard.php";
+require_once __DIR__ . "/../helpers/payment-records.php";
 
 $userId = requireLogin();
 $groupId = getIntValue($_GET["group_id"] ?? 0);
@@ -17,7 +18,10 @@ if ($groupId <= 0) {
     jsonResponse(["success" => true, "records" => []]);
 }
 
+ensureTreasurerMembership($conn, $groupId);
+
 $viewerRole = requireGroupMember($conn, $userId, $groupId);
+ensurePaymentRecordsForGroup($conn, $groupId);
 $isTreasurer = strtolower($viewerRole) === "treasurer" || getGroupTreasurerId($conn, $groupId) === $userId;
 
 $sql =

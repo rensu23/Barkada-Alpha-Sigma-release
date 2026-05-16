@@ -1,7 +1,7 @@
 import { createGroup, getGroupById, getGroupsForUser, getMembersForGroup, joinGroupByCode, updateGroup } from "./services/group.service.js";
 import { getCurrentSession } from "./services/auth.service.js";
 import { getContributions } from "./services/contribution.service.js";
-import { confirmPayment, getGroupPaymentRecords, rejectPayment, updatePaymentStatus } from "./services/payment.service.js";
+import { confirmPayment, getGroupPaymentRecords, markPaymentAsDone, rejectPayment, updatePaymentStatus } from "./services/payment.service.js";
 import { formatContributionFrequency } from "./utils/contribution-options.js";
 import { PAYMENT_STATUS } from "./utils/constants.js";
 import { formatCurrency, formatDate, formatShortDateTime } from "./utils/formatters.js";
@@ -133,16 +133,18 @@ function memberRowTemplate(member) {
 }
 
 function paymentActionsTemplate(record, canManage) {
-  if (!canManage) return "";
-
   if (record.is_self) {
+    if (record.user?.role === "Treasurer") return "";
+
+    const submitLabel = record.status === PAYMENT_STATUS.PENDING ? "Update my payment" : "Submit my payment";
     return `
       <div class="payment-row-actions">
-        ${record.status !== PAYMENT_STATUS.PAID ? `<button class="button" type="button" data-status-payment="${record.payment_id}" data-next-status="${PAYMENT_STATUS.PAID}">Mark myself paid</button>` : ""}
-        ${record.status !== PAYMENT_STATUS.NOT_PAID ? `<button class="button-secondary" type="button" data-status-payment="${record.payment_id}" data-next-status="${PAYMENT_STATUS.NOT_PAID}">Mark myself not paid</button>` : ""}
+        ${record.status !== PAYMENT_STATUS.PAID ? `<button class="button" type="button" data-submit-payment="${record.payment_id}" data-contribution-id="${record.contribution_id}">${submitLabel}</button>` : ""}
       </div>
     `;
   }
+
+  if (!canManage) return "";
 
   if (record.status === PAYMENT_STATUS.PENDING) {
     return `
@@ -172,7 +174,7 @@ function paymentRecordTemplate(record, canManage) {
           <span class="status-chip ${paymentClass(record.status)}">${paymentLabel(record.status)}</span>
         </div>
         <span>${record.contribution?.title || "Contribution"} - ${formatCurrency(record.contribution?.amount)} - ${formatContributionFrequency(record.contribution?.frequency)}</span>
-        <small>${record.is_self ? "Your treasurer payment status" : record.user?.email || ""} - Updated ${formatShortDateTime(record.confirmed_at || record.marked_at)}</small>
+        <small>${record.is_self && record.user?.role === "Treasurer" ? "Automatically paid as treasurer" : record.is_self ? "Your payment status" : record.user?.email || ""} - Updated ${formatShortDateTime(record.confirmed_at || record.marked_at)}</small>
       </div>
       ${paymentActionsTemplate(record, canManage)}
     </article>
@@ -320,7 +322,7 @@ export async function initGroupsPage() {
     const memberTarget = document.querySelector("[data-group-members]");
     memberTarget.innerHTML = members.length
       ? members.map(memberRowTemplate).join("")
-      : `<article class="empty-card"><h3>No members found</h3><p class="helper-text">Share the group code so members can join.</p></article>`;
+      : `<article class="empty-card"><h3>No participants found</h3><p class="helper-text">Share the group code so members can join.</p></article>`;
 
     const paymentTarget = document.querySelector("[data-group-payment-records]");
     renderPaymentRecords(paymentTarget, records, canManage);
@@ -354,6 +356,18 @@ export async function initGroupsPage() {
         try {
           await updatePaymentStatus(button.dataset.statusPayment, button.dataset.nextStatus);
           showToast("Payment status updated.");
+          window.setTimeout(() => window.location.reload(), 350);
+        } catch (error) {
+          showToast(error.message, "error");
+        }
+      });
+    });
+
+    paymentTarget?.querySelectorAll("[data-submit-payment]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        try {
+          await markPaymentAsDone(button.dataset.submitPayment, button.dataset.contributionId);
+          showToast("Payment submitted for review.");
           window.setTimeout(() => window.location.reload(), 350);
         } catch (error) {
           showToast(error.message, "error");
