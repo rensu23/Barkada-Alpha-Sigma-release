@@ -16,7 +16,7 @@ function showAppLoadError(error) {
     <main class="page-content">
       <article class="empty-card">
         <h1>Something went wrong while loading this page.</h1>
-        <p class="helper-text">${error.message || "Please check XAMPP, MySQL, and the imported database."}</p>
+        <p class="helper-text">${error.message || "Please refresh the page or try again in a moment."}</p>
         <a class="button" href="./login.html">Back to login</a>
       </article>
     </main>

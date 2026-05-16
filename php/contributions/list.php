@@ -4,11 +4,12 @@
  */
 
 require_once __DIR__ . "/../helpers/auth-guard.php";
+require_once __DIR__ . "/../helpers/contribution-options.php";
 
 $userId = requireLogin();
 $groupId = getIntValue($_GET["group_id"] ?? 0);
 $search = cleanText($_GET["search"] ?? "");
-$type = cleanText($_GET["type"] ?? "");
+$frequency = cleanText($_GET["frequency"] ?? "");
 $status = cleanText($_GET["status"] ?? "");
 $sort = cleanText($_GET["sort"] ?? "title");
 
@@ -39,10 +40,12 @@ if ($search !== "") {
     $paramTypes .= "ss";
 }
 
-if ($type !== "" && $type !== "All") {
-    $sql .= " AND c.type = ?";
-    $params[] = $type;
-    $paramTypes .= "s";
+if ($frequency !== "" && $frequency !== "All") {
+    if (in_array($frequency, allowedContributionFrequencies(), true)) {
+        $sql .= " AND c.frequency = ?";
+        $params[] = $frequency;
+        $paramTypes .= "s";
+    }
 }
 
 $allowedStatuses = ["Not Paid", "Pending", "Paid", "Rejected"];

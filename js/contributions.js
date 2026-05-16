@@ -2,6 +2,12 @@ import { createContribution, getContributionHistory, getContributions, getRecurr
 import { getCurrentSession } from "./services/auth.service.js";
 import { markPaymentAsDone } from "./services/payment.service.js";
 import { PAYMENT_STATUS } from "./utils/constants.js";
+import {
+  CONTRIBUTION_FREQUENCIES,
+  contributionTypeFromFrequency,
+  formatContributionFrequency,
+  isValidContributionFrequency,
+} from "./utils/contribution-options.js";
 import { formatCurrency, formatDate, formatShortDateTime } from "./utils/formatters.js";
 import { showToast } from "./ui.js";
 
@@ -85,11 +91,16 @@ function historyListItemTemplate(item) {
 function currentQueryFromControls() {
   return {
     search: document.querySelector("[data-contributions-search]")?.value || "",
-    type: document.querySelector("[data-contributions-type]")?.value || "",
+    frequency: document.querySelector("[data-contributions-frequency]")?.value || "",
     group_id: document.querySelector("[data-contributions-group]")?.value || "",
     status: document.querySelector("[data-contributions-status]")?.value || "",
     sort: document.querySelector("[data-contributions-sort]")?.value || "due-soon",
   };
+}
+
+function frequencyOptionsTemplate(includeAll = false) {
+  const options = includeAll ? ["All", ...CONTRIBUTION_FREQUENCIES] : CONTRIBUTION_FREQUENCIES;
+  return options.map((frequency) => `<option value="${frequency}">${frequency}</option>`).join("");
 }
 
 export async function initContributionsPage() {
@@ -102,7 +113,9 @@ export async function initContributionsPage() {
     const list = document.querySelector("[data-contributions-list]");
     const form = document.querySelector("[data-contribution-form]");
     const groupFilter = document.querySelector("[data-contributions-group]");
-    const filters = document.querySelectorAll("[data-contributions-search], [data-contributions-type], [data-contributions-group], [data-contributions-status], [data-contributions-sort]");
+    const frequencyFilter = document.querySelector("[data-contributions-frequency]");
+    const frequencySelect = form?.querySelector("select[name='frequency']");
+    const filters = document.querySelectorAll("[data-contributions-search], [data-contributions-frequency], [data-contributions-group], [data-contributions-status], [data-contributions-sort]");
     const treasurerGroups = (session?.groups || []).filter((group) => group.member_role === "Treasurer");
     const submitButton = form?.querySelector("button[type='submit']");
     const createPanel = document.querySelector("[data-contribution-create-panel]");
@@ -110,6 +123,8 @@ export async function initContributionsPage() {
     if (groupFilter) {
       groupFilter.innerHTML = `<option value="">All groups</option>${(session?.groups || []).map((group) => `<option value="${group.group_id}">${group.group_name}</option>`).join("")}`;
     }
+    if (frequencyFilter) frequencyFilter.innerHTML = frequencyOptionsTemplate(true);
+    if (frequencySelect) frequencySelect.innerHTML = frequencyOptionsTemplate();
 
     const groupSelect = form?.querySelector("select[name='group_id']");
     if (groupSelect) {
@@ -142,14 +157,13 @@ export async function initContributionsPage() {
         <article class="card contribution-card">
           <div class="page-header">
             <div class="page-header-copy">
-              <p class="eyebrow">${item.type}</p>
+              <p class="eyebrow">${formatContributionFrequency(item.frequency)}</p>
               <h3>${item.title}</h3>
               <p class="helper-text">${item.group?.group_name || "Group"} - ${formatCurrency(item.amount)}</p>
             </div>
             <span class="status-chip ${paymentClass(item.status)}">${item.status || "Not Paid"}</span>
           </div>
           <div class="detail-list">
-            <div class="summary-row"><span>Frequency</span><strong>${item.frequency}</strong></div>
             <div class="summary-row"><span>Due date</span><strong>${formatDate(item.due_date)}</strong></div>
             <div class="summary-row"><span>Your role</span><strong>${item.member_role}</strong></div>
           </div>
@@ -189,6 +203,10 @@ export async function initContributionsPage() {
         if (!payload.group_id) {
           throw new Error("Please select a group where you are the treasurer before creating a contribution.");
         }
+        if (!isValidContributionFrequency(payload.frequency)) {
+          throw new Error("Choose a valid contribution frequency.");
+        }
+        payload.type = contributionTypeFromFrequency(payload.frequency);
         await createContribution(payload);
         showToast("Contribution created.");
         contributions = await getContributions("", currentQueryFromControls());
@@ -204,12 +222,12 @@ export async function initContributionsPage() {
     const cycles = await getRecurringCycles(session?.user_id);
     const list = document.querySelector("[data-cycle-list]");
     if (!cycles.length) {
-      renderEmpty(list, "No recurring contributions", "Recurring rows come from contributions.type and contributions.frequency.");
+      renderEmpty(list, "No recurring contributions", "Daily, weekly, and monthly contributions will appear here.");
       return;
     }
     list.innerHTML = cycles.map((item) => `
       <article class="card">
-        <p class="eyebrow">${item.frequency}</p>
+        <p class="eyebrow">${formatContributionFrequency(item.frequency)}</p>
         <h3>${item.title}</h3>
         <p class="helper-text">${item.group_name} - ${formatCurrency(item.amount)} - Due ${formatDate(item.due_date)}</p>
         ${item.notes ? `<p class="helper-text">${item.notes}</p>` : ""}

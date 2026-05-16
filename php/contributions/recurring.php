@@ -14,7 +14,7 @@ $stmt = $conn->prepare(
      FROM contributions c
      INNER JOIN `groups` g ON g.group_id = c.group_id
      INNER JOIN group_members gm ON gm.group_id = c.group_id AND gm.user_id = ?
-     WHERE c.type = 'Recurring'
+     WHERE c.frequency IN ('Daily', 'Weekly', 'Monthly')
      ORDER BY c.frequency ASC, c.title ASC"
 );
 $stmt->bind_param("i", $userId);

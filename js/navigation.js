@@ -4,6 +4,7 @@ import { getSession } from "./utils/storage.js";
 
 const LANE_ORDER = ["Overview", "Groups", "Contributions", "Payments", "Members", "Reports"];
 const APP_LOGO_SRC = "../assets/icons/Logo.png";
+const SETTINGS_ICON = `<span class="settings-cog-icon" aria-hidden="true"></span>`;
 const ICONS = {
   Home: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-9.5Z"/></svg>`,
   Grid: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v6H4V5Zm9 0h7v6h-7V5ZM4 13h7v6H4v-6Zm9 0h7v6h-7v-6Z"/></svg>`,
@@ -11,7 +12,6 @@ const ICONS = {
   Check: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 2.8 8.4 7 10 4.2-1.6 7-5.5 7-10V6l-7-3Zm-3 9 2 2 4-4"/></svg>`,
   Users: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm6.5-1.5a3 3 0 1 0 0-6M3 21v-2a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v2m2-7c2.3.3 4 2.2 4 4.6V21"/></svg>`,
   Clock: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8 8 8 0 0 0-8-8Zm0 4v5l3 2"/></svg>`,
-  Gear: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8 4a7.8 7.8 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a8 8 0 0 0-1.7-1L15.5 3h-4l-.4 3.1a8 8 0 0 0-1.7 1l-2.4-1-2 3.4L7 11a7.8 7.8 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a8 8 0 0 0 1.7 1l.4 3.1h4l.4-3.1a8 8 0 0 0 1.7-1l2.4 1 2-3.4-2-1.5a7.8 7.8 0 0 0 .1-1Z"/></svg>`,
   Join: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm-7 9a7 7 0 0 1 14 0M17 9h4m-2-2v4"/></svg>`,
   Menu: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg>`,
   User: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm-7 9a7 7 0 0 1 14 0"/></svg>`,
@@ -104,7 +104,7 @@ function appTopbarTemplate(currentPage, session, groups, activeGroupId, role) {
     <div class="topbar-actions">
       ${groups.length ? `<div class="context-picker"><select data-group-switch aria-label="Switch active group">${options}</select></div>` : ""}
       <a class="icon-button" href="../pages/settings.html" aria-label="Open settings">
-        ${ICONS.Gear}
+        ${SETTINGS_ICON}
       </a>
     </div>
   `;
@@ -160,7 +160,7 @@ function mobileMenuTemplate(role, currentPage, session, groups, activeGroupId) {
             )
             .join("")}
           <a class="button-secondary button-block" href="../pages/join-group.html">Join with code</a>
-          <a class="button-ghost button-block" href="../pages/settings.html">${ICONS.Gear}<span>Settings</span></a>
+          <a class="button-ghost button-block" href="../pages/settings.html">${SETTINGS_ICON}<span>Settings</span></a>
         </nav>
       </aside>
     </div>

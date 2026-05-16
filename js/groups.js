@@ -1,7 +1,10 @@
 import { createGroup, getGroupById, getGroupsForUser, getMembersForGroup, joinGroupByCode, updateGroup } from "./services/group.service.js";
 import { getCurrentSession } from "./services/auth.service.js";
 import { getContributions } from "./services/contribution.service.js";
-import { formatCurrency, formatDate } from "./utils/formatters.js";
+import { confirmPayment, getGroupPaymentRecords, rejectPayment, updatePaymentStatus } from "./services/payment.service.js";
+import { formatContributionFrequency } from "./utils/contribution-options.js";
+import { PAYMENT_STATUS } from "./utils/constants.js";
+import { formatCurrency, formatDate, formatShortDateTime } from "./utils/formatters.js";
 import { showToast } from "./ui.js";
 
 function getQueryGroupId() {
@@ -33,6 +36,166 @@ function memberStatusLabel(member) {
   if (unpaid > 0) return { text: "Not Paid", className: "status-unpaid" };
   if (paid > 0) return { text: "Paid", className: "status-paid" };
   return { text: "No dues", className: "status-unpaid" };
+}
+
+function paymentClass(status) {
+  if (status === PAYMENT_STATUS.PAID) return "status-paid";
+  if (status === PAYMENT_STATUS.PENDING) return "status-pending";
+  if (status === PAYMENT_STATUS.REJECTED) return "status-rejected";
+  return "status-unpaid";
+}
+
+function paymentLabel(status) {
+  if (status === PAYMENT_STATUS.PAID) return "Paid";
+  if (status === PAYMENT_STATUS.PENDING) return "Pending confirmation";
+  if (status === PAYMENT_STATUS.REJECTED) return "Rejected / needs update";
+  return "Not paid";
+}
+
+function roleBadge(role) {
+  return `<span class="role-chip">${role || "Member"}</span>`;
+}
+
+function summarizeRecords(records) {
+  return records.reduce((summary, record) => {
+    const amount = Number(record.contribution?.amount || 0);
+    summary.total += 1;
+    summary.target += amount;
+    if (record.status === PAYMENT_STATUS.PAID) {
+      summary.paid += 1;
+      summary.collected += amount;
+    } else if (record.status === PAYMENT_STATUS.PENDING) {
+      summary.pending += 1;
+      summary.pendingValue += amount;
+    } else if (record.status === PAYMENT_STATUS.REJECTED) {
+      summary.rejected += 1;
+    } else {
+      summary.unpaid += 1;
+    }
+    return summary;
+  }, { total: 0, paid: 0, pending: 0, unpaid: 0, rejected: 0, collected: 0, pendingValue: 0, target: 0 });
+}
+
+function contributionSummaries(contributions, records) {
+  const byContribution = new Map();
+  records.forEach((record) => {
+    const id = Number(record.contribution_id);
+    if (!byContribution.has(id)) byContribution.set(id, []);
+    byContribution.get(id).push(record);
+  });
+
+  return contributions.map((contribution) => {
+    const rows = byContribution.get(Number(contribution.contribution_id)) || [];
+    const counts = summarizeRecords(rows);
+    return { contribution, rows, counts };
+  });
+}
+
+function renderMetric(label, value, detail = "") {
+  return `<div class="mini-stat"><span>${label}</span><strong>${value}</strong>${detail ? `<small>${detail}</small>` : ""}</div>`;
+}
+
+function contributionRowTemplate(item) {
+  const { contribution, counts } = item;
+  const openCount = counts.unpaid + counts.rejected;
+  return `
+    <article class="structured-row contribution-detail-row">
+      <div class="structured-row-main">
+        <strong>${contribution.title}</strong>
+        <span>${contribution.notes || "No description added."}</span>
+      </div>
+      <div class="structured-row-fields">
+        <div><span>Amount</span><strong>${formatCurrency(contribution.amount)}</strong></div>
+        <div><span>Frequency</span><strong>${formatContributionFrequency(contribution.frequency)}</strong></div>
+        <div><span>Due</span><strong>${formatDate(contribution.due_date)}</strong></div>
+        <div><span>Records</span><strong>${counts.paid} paid, ${counts.pending} pending, ${openCount} open</strong></div>
+      </div>
+    </article>
+  `;
+}
+
+function memberRowTemplate(member) {
+  const status = memberStatusLabel(member);
+  return `
+    <article class="structured-row member-detail-row">
+      <div class="structured-row-main">
+        <strong>${member.name}</strong>
+        <span>${member.email}</span>
+      </div>
+      <div class="structured-row-fields member-row-fields">
+        <div><span>Role</span><strong>${roleBadge(member.role)}</strong></div>
+        <div><span>Status</span><strong><span class="status-chip ${status.className}">${status.text}</span></strong></div>
+        <div><span>Paid</span><strong>${Number(member.paid_count || 0)}</strong></div>
+        <div><span>Open</span><strong>${Number(member.unpaid_count || 0) + Number(member.rejected_count || 0)}</strong></div>
+      </div>
+    </article>
+  `;
+}
+
+function paymentActionsTemplate(record, canManage) {
+  if (!canManage) return "";
+
+  if (record.is_self) {
+    return `
+      <div class="payment-row-actions">
+        ${record.status !== PAYMENT_STATUS.PAID ? `<button class="button" type="button" data-status-payment="${record.payment_id}" data-next-status="${PAYMENT_STATUS.PAID}">Mark myself paid</button>` : ""}
+        ${record.status !== PAYMENT_STATUS.NOT_PAID ? `<button class="button-secondary" type="button" data-status-payment="${record.payment_id}" data-next-status="${PAYMENT_STATUS.NOT_PAID}">Mark myself not paid</button>` : ""}
+      </div>
+    `;
+  }
+
+  if (record.status === PAYMENT_STATUS.PENDING) {
+    return `
+      <div class="payment-row-actions">
+        <button class="button" type="button" data-confirm-payment="${record.payment_id}">Accept confirmation</button>
+        <button class="button-danger" type="button" data-reject-payment="${record.payment_id}">Needs update</button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="payment-row-actions">
+      ${record.status !== PAYMENT_STATUS.PAID ? `<button class="button" type="button" data-status-payment="${record.payment_id}" data-next-status="${PAYMENT_STATUS.PAID}">Mark paid</button>` : ""}
+      ${record.status !== PAYMENT_STATUS.NOT_PAID ? `<button class="button-secondary" type="button" data-status-payment="${record.payment_id}" data-next-status="${PAYMENT_STATUS.NOT_PAID}">Mark not paid</button>` : ""}
+      ${record.status !== PAYMENT_STATUS.REJECTED ? `<button class="button-danger" type="button" data-status-payment="${record.payment_id}" data-next-status="${PAYMENT_STATUS.REJECTED}">Needs update</button>` : ""}
+    </div>
+  `;
+}
+
+function paymentRecordTemplate(record, canManage) {
+  return `
+    <article class="payment-row payment-management-row">
+      <div class="payment-record-copy">
+        <div class="payment-record-title">
+          <strong>${record.user?.name || "Unknown member"}</strong>
+          ${roleBadge(record.user?.role)}
+          <span class="status-chip ${paymentClass(record.status)}">${paymentLabel(record.status)}</span>
+        </div>
+        <span>${record.contribution?.title || "Contribution"} - ${formatCurrency(record.contribution?.amount)} - ${formatContributionFrequency(record.contribution?.frequency)}</span>
+        <small>${record.is_self ? "Your treasurer payment status" : record.user?.email || ""} - Updated ${formatShortDateTime(record.confirmed_at || record.marked_at)}</small>
+      </div>
+      ${paymentActionsTemplate(record, canManage)}
+    </article>
+  `;
+}
+
+function renderPaymentRecords(target, records, canManage) {
+  if (!records.length) {
+    target.innerHTML = `<article class="empty-card"><h3>No payment records yet</h3><p class="helper-text">Create a contribution to generate member payment rows.</p></article>`;
+    return;
+  }
+
+  const visibleRecords = records.slice(0, 12);
+  const extraRecords = records.slice(12);
+  target.innerHTML = `
+    ${visibleRecords.map((record) => paymentRecordTemplate(record, canManage)).join("")}
+    ${extraRecords.length ? `
+      <details class="disclosure">
+        <summary>Show ${extraRecords.length} older record${extraRecords.length === 1 ? "" : "s"}</summary>
+        <div class="surface-list">${extraRecords.map((record) => paymentRecordTemplate(record, canManage)).join("")}</div>
+      </details>
+    ` : ""}
+  `;
 }
 
 function groupCardTemplate(group) {
@@ -105,41 +268,98 @@ export async function initGroupsPage() {
     const group = groupId ? await getGroupById(groupId) : null;
     const contributions = groupId ? await getContributions(groupId) : [];
     const members = groupId ? await getMembersForGroup(groupId) : [];
+    const paymentData = groupId ? await getGroupPaymentRecords(groupId) : { records: [], canManage: false, viewerRole: "Member" };
+    const records = paymentData.records || [];
+    const canManage = Boolean(paymentData.canManage);
+    const summary = summarizeRecords(records);
+    const completion = summary.target > 0 ? Math.round((summary.collected / summary.target) * 100) : 0;
 
     document.querySelector("[data-group-title]").textContent = group?.group_name || "Group not loaded";
     document.querySelector("[data-group-description]").textContent = group?.description || "No description added.";
+    document.querySelector("[data-group-completion]").textContent = `${completion}%`;
+    document.querySelector("[data-group-completion]").className = `status-chip ${completion >= 100 ? "status-paid" : completion > 0 ? "status-pending" : "status-unpaid"}`;
+    document.querySelector("[data-group-progress]").style.setProperty("--value", `${completion}%`);
     document.querySelector("[data-group-meta]").innerHTML = group
       ? `
-        <div class="summary-row"><span>Target amount</span><strong>${formatCurrency(group.target_amount)}</strong></div>
-        <div class="summary-row"><span>Deadline</span><strong>${formatDate(group.deadline)}</strong></div>
+        ${renderMetric("Target", formatCurrency(group.target_amount))}
+        ${renderMetric("Deadline", formatDate(group.deadline))}
+        ${renderMetric("Collected", formatCurrency(summary.collected), `${summary.paid} paid record${summary.paid === 1 ? "" : "s"}`)}
+        ${renderMetric("Pending review", formatCurrency(summary.pendingValue), `${summary.pending} waiting`)}
+        ${renderMetric("Payment status", `${summary.paid}/${summary.total}`, `${summary.unpaid + summary.rejected} open`)}
+        ${renderMetric("Completion", `${completion}%`, "Confirmed payments")}
       `
       : `<div class="summary-row"><span>Status</span><strong>Group details not loaded</strong></div>`;
     document.querySelector("[data-group-tools] .detail-list").innerHTML = `
-      <div class="summary-row"><span>Your role</span><strong>${group?.member_role || "Member"}</strong></div>
-      <div class="summary-row"><span>Join code</span><strong>${group?.join_code || "Hidden for members"}</strong></div>
+      <div class="summary-row"><span>Your role</span><strong>${roleBadge(group?.member_role || "Member")}</strong></div>
+      <div class="summary-row"><span>Group code</span><strong>${group?.join_code || "Hidden for members"}</strong></div>
     `;
-    document.querySelector("[data-group-edit-link]").href = `./edit-group.html?group_id=${groupId}`;
+    const editLink = document.querySelector("[data-group-edit-link]");
+    const copyButton = document.querySelector("[data-copy-group-code]");
+    if (editLink) {
+      editLink.href = `./edit-group.html?group_id=${groupId}`;
+      editLink.hidden = !canManage;
+    }
+    if (copyButton) {
+      copyButton.hidden = !canManage || !group?.join_code;
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(group.join_code);
+          showToast("Group code copied.");
+        } catch (error) {
+          showToast("Could not copy the group code.", "error");
+        }
+      });
+    }
 
     const contributionTarget = document.querySelector("[data-group-contributions]");
-    contributionTarget.innerHTML = contributions.length
-      ? contributions.map((item) => `
-          <article class="surface-item">
-            <strong>${item.title}</strong>
-            <span>${formatCurrency(item.amount)} - ${item.type} - Due ${formatDate(item.due_date)}</span>
-            ${item.notes ? `<span>${item.notes}</span>` : ""}
-          </article>
-        `).join("")
+    const contributionRows = contributionSummaries(contributions, records);
+    contributionTarget.innerHTML = contributionRows.length
+      ? contributionRows.map(contributionRowTemplate).join("")
       : `<article class="empty-card"><h3>No contributions yet</h3><p class="helper-text">The treasurer can add dues from the Contributions page.</p></article>`;
 
     const memberTarget = document.querySelector("[data-group-members]");
     memberTarget.innerHTML = members.length
-      ? members.map((member) => `
-          <article class="surface-item">
-            <strong>${member.name}</strong>
-            <span>${member.role} - ${member.email}</span>
-          </article>
-        `).join("")
+      ? members.map(memberRowTemplate).join("")
       : `<article class="empty-card"><h3>No members found</h3><p class="helper-text">Share the group code so members can join.</p></article>`;
+
+    const paymentTarget = document.querySelector("[data-group-payment-records]");
+    renderPaymentRecords(paymentTarget, records, canManage);
+
+    paymentTarget?.querySelectorAll("[data-confirm-payment]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        try {
+          await confirmPayment(button.dataset.confirmPayment);
+          showToast("Member confirmation accepted.");
+          window.setTimeout(() => window.location.reload(), 350);
+        } catch (error) {
+          showToast(error.message, "error");
+        }
+      });
+    });
+
+    paymentTarget?.querySelectorAll("[data-reject-payment]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        try {
+          await rejectPayment(button.dataset.rejectPayment);
+          showToast("Member payment marked as needing an update.");
+          window.setTimeout(() => window.location.reload(), 350);
+        } catch (error) {
+          showToast(error.message, "error");
+        }
+      });
+    });
+
+    paymentTarget?.querySelectorAll("[data-status-payment]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        try {
+          await updatePaymentStatus(button.dataset.statusPayment, button.dataset.nextStatus);
+          showToast("Payment status updated.");
+          window.setTimeout(() => window.location.reload(), 350);
+        } catch (error) {
+          showToast(error.message, "error");
+        }
+      });
+    });
   }
 
   if (page === "create-group" || page === "edit-group") {

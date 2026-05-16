@@ -32,12 +32,8 @@
               <input id="contrib-search" type="search" data-contributions-search placeholder="Search by title or group">
             </div>
             <div class="field-group">
-              <label for="contrib-type">Type</label>
-              <select id="contrib-type" data-contributions-type>
-                <option>All</option>
-                <option>One-time</option>
-                <option>Recurring</option>
-              </select>
+              <label for="contrib-frequency">Frequency</label>
+              <select id="contrib-frequency" data-contributions-frequency></select>
             </div>
             <div class="field-group">
               <label for="contrib-group">Group</label>
@@ -77,8 +73,7 @@
               <div class="field-group"><label>Group<select name="group_id"></select></label></div>
               <div class="field-group"><label>Title<input name="title" type="text" placeholder="Example: Final Venue Payment"></label></div>
               <div class="field-group"><label>Amount<input name="amount" type="number" placeholder="0"></label></div>
-              <div class="field-group"><label>Type<select name="type"><option>One-time</option><option>Recurring</option></select></label></div>
-              <div class="field-group"><label>Frequency<select name="frequency"><option>One-time</option><option>Weekly</option><option>Monthly</option><option>Custom</option></select></label></div>
+              <div class="field-group"><label>Frequency<select name="frequency"></select></label></div>
               <div class="field-group"><label>Due date<input name="due_date" type="date"></label><p class="helper-text">Optional due date for this contribution.</p></div>
             </div>
             <div class="field-group"><label>Notes<textarea name="notes" rows="4" placeholder="Reference or reminder for members"></textarea></label></div>

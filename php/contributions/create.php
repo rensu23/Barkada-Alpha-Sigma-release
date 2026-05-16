@@ -5,6 +5,7 @@
 
 require_once __DIR__ . "/../helpers/auth-guard.php";
 require_once __DIR__ . "/../helpers/activity.php";
+require_once __DIR__ . "/../helpers/contribution-options.php";
 
 requirePost();
 $userId = requireLogin();
@@ -18,20 +19,12 @@ $frequency = cleanText($data["frequency"] ?? "");
 $dueDate = validateDateOrNull(cleanText($data["due_date"] ?? ""));
 $notes = cleanText($data["notes"] ?? "");
 
-$allowedTypes = ["One-time", "Recurring"];
-$allowedFrequency = ["One-time", "Weekly", "Monthly", "Custom"];
-
 if ($groupId <= 0 || $title === "" || $amount <= 0) {
     jsonResponse(["success" => false, "message" => "Group, title, and amount are required."], 422);
 }
 
-if (!in_array($type, $allowedTypes, true)) {
-    jsonResponse(["success" => false, "message" => "Invalid contribution type."], 422);
-}
-
-if (!in_array($frequency, $allowedFrequency, true)) {
-    jsonResponse(["success" => false, "message" => "Invalid frequency."], 422);
-}
+validateContributionFrequency($frequency);
+$type = normalizeContributionType($type, $frequency);
 
 requireTreasurer($conn, $userId, $groupId);
 

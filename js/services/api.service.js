@@ -17,7 +17,7 @@ export async function fetchJson(endpoint, options = {}) {
   const data = await response.json().catch(() => ({}));
 
   if (!Object.keys(data).length) {
-    throw new Error("The server returned an invalid response. Please check PHP errors and database setup.");
+    throw new Error("The server returned an invalid response. Please try again.");
   }
 
   if (!response.ok) {

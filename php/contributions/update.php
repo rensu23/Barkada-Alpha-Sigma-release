@@ -5,6 +5,7 @@
 
 require_once __DIR__ . "/../helpers/auth-guard.php";
 require_once __DIR__ . "/../helpers/activity.php";
+require_once __DIR__ . "/../helpers/contribution-options.php";
 
 requirePost();
 $userId = requireLogin();
@@ -22,16 +23,8 @@ if ($contributionId <= 0 || $title === "" || $amount <= 0) {
     jsonResponse(["success" => false, "message" => "Contribution, title, and amount are required."], 422);
 }
 
-$allowedTypes = ["One-time", "Recurring"];
-$allowedFrequency = ["One-time", "Weekly", "Monthly", "Custom"];
-
-if (!in_array($type, $allowedTypes, true)) {
-    jsonResponse(["success" => false, "message" => "Invalid contribution type."], 422);
-}
-
-if (!in_array($frequency, $allowedFrequency, true)) {
-    jsonResponse(["success" => false, "message" => "Invalid frequency."], 422);
-}
+validateContributionFrequency($frequency);
+$type = normalizeContributionType($type, $frequency);
 
 $stmt = $conn->prepare("SELECT group_id FROM contributions WHERE contribution_id = ? LIMIT 1");
 $stmt->bind_param("i", $contributionId);

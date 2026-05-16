@@ -20,7 +20,7 @@ try {
     header("Content-Type: application/json");
     echo json_encode([
         "success" => false,
-        "message" => "Database connection failed. Please check XAMPP MySQL and barkada_db."
+        "message" => "The service is unavailable right now. Please try again later."
     ]);
     exit;
 }

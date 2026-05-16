@@ -296,6 +296,7 @@
 }
 
 .progress-fill {
+  display: block;
   height: 100%;
   width: var(--value, 0%);
   border-radius: inherit;
@@ -557,6 +558,16 @@ th:last-child {
   stroke-linejoin: round;
 }
 
+.settings-cog-icon {
+  display: inline-block;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+  background: currentColor;
+  -webkit-mask: url("../assets/icons/settings-cog.svg") center / contain no-repeat;
+  mask: url("../assets/icons/settings-cog.svg") center / contain no-repeat;
+}
+
 .brand-mark img {
   display: block;
   width: 100%;
@@ -706,6 +717,9 @@ body.has-mobile-menu {
 }
 
 .compact-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
 }
@@ -1490,6 +1504,101 @@ body.has-mobile-menu {
   box-shadow: none;
 }
 
+.group-detail-header {
+  align-items: center;
+}
+
+.group-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.group-summary-card,
+.group-access-card,
+.group-contributions-card,
+.group-members-card,
+.group-payments-card {
+  align-content: start;
+}
+
+.group-payments-card {
+  grid-column: 1 / -1;
+}
+
+.structured-row {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  min-width: 0;
+}
+
+.structured-row-main {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.structured-row-main span,
+.payment-record-copy span,
+.payment-record-copy small {
+  color: var(--color-text-muted);
+}
+
+.structured-row-fields {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.structured-row-fields > div {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.structured-row-fields span {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.structured-row-fields strong {
+  min-width: 0;
+}
+
+.payment-management-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.payment-record-copy {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.payment-record-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.payment-record-title strong {
+  min-width: 0;
+}
+
+@media (max-width: 980px) {
+  .group-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 540px) {
   .button,
   .button-secondary,
@@ -1553,7 +1662,17 @@ body.has-mobile-menu {
   }
 
   .member-status-grid,
-  .contribution-metrics {
+  .contribution-metrics,
+  .compact-metric-grid,
+  .structured-row-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .structured-row {
+    padding: 0.75rem;
+  }
+
+  .payment-management-row {
     grid-template-columns: 1fr;
   }
 

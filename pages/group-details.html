@@ -18,7 +18,7 @@
       <header class="app-topbar" data-topbar></header>
       <nav class="mobile-bottom-nav" data-bottom-nav></nav>
       <main class="page-content">
-        <section class="page-header page-section">
+        <section class="page-header group-detail-header page-section">
           <div class="page-header-copy">
             <p class="eyebrow">Group detail</p>
             <h1 data-group-title>Loading group...</h1>
@@ -29,24 +29,49 @@
             <button class="button" type="button" data-copy-group-code>Copy group code</button>
           </div>
         </section>
-        <section class="grid-2 page-section">
-          <article class="card">
-            <h2>Group summary</h2>
-            <div class="detail-list space-top" data-group-meta></div>
+        <section class="group-detail-grid page-section">
+          <article class="card group-summary-card">
+            <div class="compact-card-header">
+              <div>
+                <p class="eyebrow">Summary</p>
+                <h2>Group summary</h2>
+              </div>
+              <span class="status-chip status-unpaid" data-group-completion>0%</span>
+            </div>
+            <div class="progress-track space-top" aria-hidden="true"><span class="progress-fill" data-group-progress></span></div>
+            <div class="compact-metric-grid space-top" data-group-meta></div>
           </article>
-          <article class="card" data-group-tools>
-            <h2>Group access</h2>
+          <article class="card group-access-card" data-group-tools>
+            <div>
+              <p class="eyebrow">Access</p>
+              <h2>Group access</h2>
+            </div>
             <div class="detail-list space-top"></div>
           </article>
-        </section>
-        <section class="grid-2 page-section">
-          <article class="table-card">
-            <h2>Contributions</h2>
+          <article class="table-card group-contributions-card">
+            <div class="compact-card-header">
+              <div>
+                <p class="eyebrow">Dues</p>
+                <h2>Contributions</h2>
+              </div>
+            </div>
             <div class="surface-list space-top" data-group-contributions></div>
           </article>
-          <article class="table-card">
-            <h2>Members</h2>
+          <article class="table-card group-members-card">
+            <div>
+              <p class="eyebrow">Roster</p>
+              <h2>Members</h2>
+            </div>
             <div class="surface-list space-top" data-group-members></div>
+          </article>
+          <article class="table-card group-payments-card">
+            <div class="compact-card-header">
+              <div>
+                <p class="eyebrow">Payment records</p>
+                <h2>Member payment status</h2>
+              </div>
+            </div>
+            <div class="surface-list space-top" data-group-payment-records></div>
           </article>
         </section>
       </main>

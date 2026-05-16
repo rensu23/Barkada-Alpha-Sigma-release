@@ -56,8 +56,12 @@ function activityText(item) {
     contribution_created: `${actor} added a contribution${contribution}`,
     contribution_updated: `${actor} updated a contribution${contribution}`,
     payment_marked_paid: `${actor} marked paid${contribution}`,
-    payment_confirmed: `${actor} confirmed a payment${contribution}`,
-    payment_rejected: `${actor} rejected a payment${contribution}`,
+    payment_confirmed: `${actor} accepted a member confirmation${contribution}`,
+    payment_rejected: `${actor} marked a payment as needing an update${contribution}`,
+    payment_member_marked_paid: `${actor} marked a member paid${contribution}`,
+    payment_member_marked_unpaid: `${actor} marked a member not paid${contribution}`,
+    payment_self_marked_paid: `${actor} updated own payment status to paid${contribution}`,
+    payment_self_marked_unpaid: `${actor} updated own payment status to not paid${contribution}`,
   };
 
   return {

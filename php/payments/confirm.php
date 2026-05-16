@@ -16,7 +16,7 @@ if ($paymentId <= 0) {
 }
 
 $stmt = $conn->prepare(
-    "SELECT pr.payment_id, pr.status, pr.contribution_id, c.group_id
+    "SELECT pr.payment_id, pr.user_id, pr.status, pr.contribution_id, c.group_id
      FROM payment_records pr
      INNER JOIN contributions c ON c.contribution_id = pr.contribution_id
      WHERE pr.payment_id = ?
@@ -32,6 +32,10 @@ if (!$payment) {
 }
 
 requireTreasurer($conn, $userId, (int) $payment["group_id"]);
+
+if ((int) $payment["user_id"] === $userId) {
+    jsonResponse(["success" => false, "message" => "Use your own payment status controls instead of confirming yourself."], 403);
+}
 
 $status = "Paid";
 $stmt = $conn->prepare("UPDATE payment_records SET status = ?, confirmed_at = NOW(), confirmed_by = ? WHERE payment_id = ?");

@@ -28,8 +28,8 @@ export async function initPaymentsPage() {
       </div>
       <div class="summary-row"><span>Marked at</span><strong>${formatShortDateTime(item.marked_at)}</strong></div>
       <div class="inline-actions space-top">
-        <button class="button" type="button" data-confirm-payment="${item.payment_id}">Confirm</button>
-        <button class="button-danger" type="button" data-reject-payment="${item.payment_id}">Reject</button>
+        <button class="button" type="button" data-confirm-payment="${item.payment_id}">Accept confirmation</button>
+        <button class="button-danger" type="button" data-reject-payment="${item.payment_id}">Needs update</button>
       </div>
     </article>
   `).join("");
@@ -49,12 +49,12 @@ export async function initPaymentsPage() {
   list.querySelectorAll("[data-reject-payment]").forEach((button) => {
     button.addEventListener("click", () => {
       const overlay = openModal({
-        title: "Reject payment",
-        body: "Reject this payment claim so the member can check and mark it again later.",
+        title: "Request payment update",
+        body: "Mark this claim as needing an update so the member can check it and submit again.",
         actions: `
           <form data-rejection-form class="stack">
-            <textarea name="note" rows="4" placeholder="Reason for rejection"></textarea>
-            <button class="button-danger button-block" type="submit">Reject payment</button>
+            <textarea name="note" rows="4" placeholder="Optional note for your records"></textarea>
+            <button class="button-danger button-block" type="submit">Needs update</button>
           </form>
         `,
       });
